@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'callout
+
+  Sample SAM Template for callout
+
+  '
+Parameters:
+  ContactFlowId:
+    Type: String
+  InstanceId:
+    Type: String
+  SourcePhoneNumber:
+    Type: String
+Globals:
+  Function:
+    Timeout: 180
+    Tracing: Active
+Resources:
+  CalloutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://cywongit114115callout/654ab7749cf1dc3d86a0a0d92c985d86
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - connect:StartOutboundVoiceContact
+          Resource: '*'
+      Environment:
+        Variables:
+          ContactFlowId:
+            Ref: ContactFlowId
+          InstanceId:
+            Ref: InstanceId
+          SourcePhoneNumber:
+            Ref: SourcePhoneNumber
+Outputs:
+  CalloutFunction:
+    Description: Call Out Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - CalloutFunction
+      - Arn
+  CalloutFunctionIamRole:
+    Description: Implicit IAM Role created for Call Out function
+    Value:
+      Fn::GetAtt:
+      - CalloutFunctionRole
+      - Arn
