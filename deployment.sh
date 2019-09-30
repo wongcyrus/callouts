@@ -12,6 +12,5 @@ sam package --template-file template.yaml --s3-bucket $sourcebucket --output-tem
 aws cloudformation deploy --stack-name $STACK_NAME --template-file package.yaml \
 --region $REGION --capabilities CAPABILITY_IAM \
 --parameter-overrides \
-    ContactFlowId="5647fbab-8265-4a7d-bedb-3811f597c906" \
-    InstanceId="3af3242c-de99-472b-914c-060e914f844b" \
+    ContactFlowArn="arn:aws:connect:us-east-1:467005446488:instance/3af3242c-de99-472b-914c-060e914f844b/contact-flow/5647fbab-8265-4a7d-bedb-3811f597c906" \
     SourcePhoneNumber="+12569639465" 

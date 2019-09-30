@@ -2,28 +2,22 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   callout
-
-  Sample SAM Template for callout
 Parameters:
-  ContactFlowId:
-    Type: String
-  InstanceId:
+  ContactFlowArn:
     Type: String
   SourcePhoneNumber:
     Type: String
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 180
     Tracing: Active
-
+    Runtime: python3.7  
 Resources:
   CalloutFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
+      Handler: send_call.lambda_handler
       CodeUri: call_out/
-      Handler: app.lambda_handler
-      Runtime: python3.7
       Policies:
         - Version: '2012-10-17' # Policy Document
           Statement:
@@ -33,17 +27,111 @@ Resources:
               Resource: "*"
       Environment:
         Variables:
-          ContactFlowId: !Ref ContactFlowId
-          InstanceId: !Ref InstanceId
+          ContactFlowArn: !Ref ContactFlowArn
           SourcePhoneNumber: !Ref SourcePhoneNumber
 
+  InputTransformFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: input_transform.lambda_handler
+      CodeUri: call_out/
+      
+  CalloutSQSQueueFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: start_call_out_flow.lambda_handler
+      CodeUri: call_out/
+      Timeout: 30
+      Policies:
+        - StepFunctionsExecutionPolicy:
+            StateMachineName:
+              !GetAtt [ CalloutStateMachine, Name ]
+      Environment:
+        Variables:
+          CallSqsQueueUrl: !Ref CallSqsQueue
+          CalloutStateMachineArn: !Ref CalloutStateMachine      
+      Events:
+        CallSQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt CallSqsQueue.Arn
+            BatchSize: 1
+            
+  CallSqsQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      RedrivePolicy: 
+        deadLetterTargetArn: !GetAtt [ CallDeadLetterQueue, Arn ]
+        maxReceiveCount: 1
+  CallDeadLetterQueue: 
+    Type: AWS::SQS::Queue
+
+  CalloutStatesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+
+  CalloutStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString:
+        !Sub
+          - |-
+            {
+              "Comment": "Reading messages from an SQS queue and iteratively processing each message.",
+              "StartAt": "Input Transform",
+              "States": {
+                "Input Transform":{
+                  "Type": "Task",
+                  "Resource": "${InputTransformFunction}",
+                  "Next": "Process Call Messages"
+                },
+                "Process Call Messages": {
+                  "Type": "Map",
+                  "Next": "Finish",
+                  "InputPath": "$",
+                  "ItemsPath": "$.items",
+                  "Iterator": {
+                    "StartAt": "Callout with AWS Connect",
+                    "States": {
+                      "Callout with AWS Connect": {
+                        "Type": "Task",
+                        "Resource": "${CalloutFunction}",
+                        "End": true
+                      }
+                    }
+                  }
+                },
+                "Finish": {
+                  "Type": "Succeed"
+                }
+              }
+            }            
+          - 
+            CalloutFunction: !GetAtt [ CalloutFunction, Arn ]
+            InputTransformFunction: !GetAtt [ InputTransformFunction, Arn ]
+      RoleArn: !GetAtt [ CalloutStatesExecutionRole, Arn ]
+      
+      
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  CalloutFunction:
-    Description: "Call Out Lambda Function ARN"
-    Value: !GetAtt CalloutFunction.Arn
-  CalloutFunctionIamRole:
-    Description: "Implicit IAM Role created for Call Out function"
-    Value: !GetAtt CalloutFunctionRole.Arn
+  CallSqsQueue:
+    Description: "Call Out Queue ARN"
+    Value: !GetAtt CallSqsQueue.Arn
+

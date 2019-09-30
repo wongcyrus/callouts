@@ -2,13 +2,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: 'callout
 
-  Sample SAM Template for callout
-
   '
 Parameters:
-  ContactFlowId:
-    Type: String
-  InstanceId:
+  ContactFlowArn:
     Type: String
   SourcePhoneNumber:
     Type: String
@@ -16,13 +12,13 @@ Globals:
   Function:
     Timeout: 180
     Tracing: Active
+    Runtime: python3.7
 Resources:
   CalloutFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://cywongit114115callout/654ab7749cf1dc3d86a0a0d92c985d86
-      Handler: app.lambda_handler
-      Runtime: python3.7
+      Handler: send_call.lambda_handler
+      CodeUri: s3://cywongit114115callout/5d00307311f919f25a3ab9e3fb12185e
       Policies:
       - Version: '2012-10-17'
         Statement:
@@ -32,22 +28,107 @@ Resources:
           Resource: '*'
       Environment:
         Variables:
-          ContactFlowId:
-            Ref: ContactFlowId
-          InstanceId:
-            Ref: InstanceId
+          ContactFlowArn:
+            Ref: ContactFlowArn
           SourcePhoneNumber:
             Ref: SourcePhoneNumber
+  InputTransformFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: input_transform.lambda_handler
+      CodeUri: s3://cywongit114115callout/5d00307311f919f25a3ab9e3fb12185e
+  CalloutSQSQueueFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: start_call_out_flow.lambda_handler
+      CodeUri: s3://cywongit114115callout/5d00307311f919f25a3ab9e3fb12185e
+      Timeout: 30
+      Policies:
+      - StepFunctionsExecutionPolicy:
+          StateMachineName:
+            Fn::GetAtt:
+            - CalloutStateMachine
+            - Name
+      Environment:
+        Variables:
+          CallSqsQueueUrl:
+            Ref: CallSqsQueue
+          CalloutStateMachineArn:
+            Ref: CalloutStateMachine
+      Events:
+        CallSQSEvent:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - CallSqsQueue
+              - Arn
+            BatchSize: 1
+  CallSqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+          - CallDeadLetterQueue
+          - Arn
+        maxReceiveCount: 1
+  CallDeadLetterQueue:
+    Type: AWS::SQS::Queue
+  CalloutStatesExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - Fn::Sub: states.${AWS::Region}.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: StatesExecutionPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource: '*'
+  CalloutStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString:
+        Fn::Sub:
+        - "{\n  \"Comment\": \"Reading messages from an SQS queue and iteratively\
+          \ processing each message.\",\n  \"StartAt\": \"Input Transform\",\n  \"\
+          States\": {\n    \"Input Transform\":{\n      \"Type\": \"Task\",\n    \
+          \  \"Resource\": \"${InputTransformFunction}\",\n      \"Next\": \"Process\
+          \ Call Messages\"\n    },\n    \"Process Call Messages\": {\n      \"Type\"\
+          : \"Map\",\n      \"Next\": \"Finish\",\n      \"InputPath\": \"$\",\n \
+          \     \"ItemsPath\": \"$.items\",\n      \"Iterator\": {\n        \"StartAt\"\
+          : \"Callout with AWS Connect\",\n        \"States\": {\n          \"Callout\
+          \ with AWS Connect\": {\n            \"Type\": \"Task\",\n            \"\
+          Resource\": \"${CalloutFunction}\",\n            \"End\": true\n       \
+          \   }\n        }\n      }\n    },\n    \"Finish\": {\n      \"Type\": \"\
+          Succeed\"\n    }\n  }\n}            "
+        - CalloutFunction:
+            Fn::GetAtt:
+            - CalloutFunction
+            - Arn
+          InputTransformFunction:
+            Fn::GetAtt:
+            - InputTransformFunction
+            - Arn
+      RoleArn:
+        Fn::GetAtt:
+        - CalloutStatesExecutionRole
+        - Arn
 Outputs:
-  CalloutFunction:
-    Description: Call Out Lambda Function ARN
+  CallSqsQueue:
+    Description: Call Out Queue ARN
     Value:
       Fn::GetAtt:
-      - CalloutFunction
-      - Arn
-  CalloutFunctionIamRole:
-    Description: Implicit IAM Role created for Call Out function
-    Value:
-      Fn::GetAtt:
-      - CalloutFunctionRole
+      - CallSqsQueue
       - Arn
