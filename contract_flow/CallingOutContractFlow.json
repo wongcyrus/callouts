@@ -67,14 +67,6 @@
       "type": "GetUserInput",
       "branches": [
         {
-          "condition": "NoMatch",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "Error",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
-        },
-        {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_OkIntent",
@@ -85,6 +77,14 @@
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_RepeatIntent",
           "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
         }
       ],
       "parameters": [
@@ -126,6 +126,12 @@
           "key": "message",
           "value": "message",
           "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "userId",
+          "value": "id",
+          "namespace": "User Defined"
         }
       ],
       "metadata": {
@@ -135,11 +141,11 @@
         },
         "conditionMetadata": [
           {
-            "id": "f84ef9ee-9c9f-4af1-9b93-0fb0e84d17c2",
+            "id": "c8949aaa-419c-494a-b4ed-1d27fba9e5aa",
             "value": "CalloutBot_OkIntent"
           },
           {
-            "id": "ffdbd8bf-1c69-4ef0-9b79-572aeefb3342",
+            "id": "5a273332-b3aa-4b4e-bb82-18997d1903af",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -147,7 +153,8 @@
         "dynamicMetadata": {
           "customer_number": true,
           "username": true,
-          "message": true
+          "message": true,
+          "userId": true
         }
       },
       "target": "Lex"
@@ -166,6 +173,6 @@
     "description": null,
     "type": "contactFlow",
     "status": "published",
-    "hash": "436fbbbadb918de7b8ab95e4c7b6255bec375eadff1d78bff354fed7a6018d41"
+    "hash": "574c685dfbe15643216b9d652d68da393dc04d727fdbe00b33f699e974d24a31"
   }
 }

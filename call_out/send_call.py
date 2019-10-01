@@ -16,23 +16,12 @@ def lambda_handler(event, context):
             ContactFlowId=contract_flow_id,
             InstanceId=instance_id,
             SourcePhoneNumber=os.environ['SourcePhoneNumber'],
-            Attributes={
-                'username': event['username'],
-                'message': event['message']
-            })
+            Attributes=event)
     except Exception as err:
         print(err)
-        return {
-            'username': event['username'],
-            'message': event['message'],
-            'phone_number': event['phone_number'],
-            "status": "NotCallable",
-            "error": str(err)
-        }
+        event['status'] = "NotCallable"
+        event['error'] = str(err)
+        return event
 
-    return {
-        'username': event['username'],
-        'message': event['message'],
-        'phone_number': event['phone_number'],
-        "status": "Calling"
-    }
+    event['status'] = "Calling"
+    return event
