@@ -30,18 +30,24 @@ Resources:
           ContactFlowArn: !Ref ContactFlowArn
           SourcePhoneNumber: !Ref SourcePhoneNumber
 
-  InputTransformFunction:
-    Type: AWS::Serverless::Function
+  LibLayer:
+    Type: AWS::Serverless::LayerVersion
     Properties:
-      Handler: input_transform.lambda_handler
-      CodeUri: call_out/
+      ContentUri: lib
+      CompatibleRuntimes:
+        - python3.7
+      LicenseInfo: 'Available under the MIT-0 license.'
+      RetentionPolicy: Delete  
       
   CalloutSQSQueueFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: start_call_out_flow.lambda_handler
       CodeUri: call_out/
+      Layers:
+        - !Ref LibLayer      
       Timeout: 30
+      ReservedConcurrentExecutions: 1
       Policies:
         - StepFunctionsExecutionPolicy:
             StateMachineName:
@@ -96,24 +102,23 @@ Resources:
           - |-
             {
               "Comment": "Reading messages from an SQS queue and iteratively processing each message.",
-              "StartAt": "Input Transform",
+              "StartAt": "Start",
               "States": {
-                "Input Transform":{
-                  "Type": "Task",
-                  "Resource": "${InputTransformFunction}",
+                "Start":{
+                  "Type": "Pass",    
                   "Next": "Process Call Messages"
                 },
                 "Process Call Messages": {
                   "Type": "Map",
                   "Next": "Finish",
                   "InputPath": "$",
-                  "ItemsPath": "$.items",
+                  "ItemsPath": "$",
                   "Iterator": {
                     "StartAt": "Callout with AWS Connect",
                     "States": {
                       "Callout with AWS Connect": {
                         "Type": "Task",
-                        "Resource": "${CalloutFunction}",
+                        "Resource": "arn:aws:lambda:us-east-1:467005446488:function:it114115callout-CalloutFunction-J6DYCOUO4GYQ",
                         "End": true
                       }
                     }
@@ -123,10 +128,9 @@ Resources:
                   "Type": "Succeed"
                 }
               }
-            }            
+            }                       
           - 
             CalloutFunction: !GetAtt [ CalloutFunction, Arn ]
-            InputTransformFunction: !GetAtt [ InputTransformFunction, Arn ]
       RoleArn: !GetAtt [ CalloutStatesExecutionRole, Arn ]
       
       

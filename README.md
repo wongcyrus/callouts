@@ -15,6 +15,9 @@ This project is a tools to send out bound call reminder with AWS Connect and sav
 Update ContactFlowArn, and SourcePhoneNumber in deployment.sh.
 
 ./setup.sh
+
+sudo ./get_layer_packages.sh
+
 ./deployment.sh
 
 

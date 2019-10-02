@@ -103,7 +103,7 @@
         },
         {
           "name": "BotAlias",
-          "value": "callout"
+          "value": "$LATEST"
         },
         {
           "name": "BotRegion",
