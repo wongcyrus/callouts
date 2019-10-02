@@ -29,6 +29,7 @@ def lambda_handler(event, context):
                 lambda recevier: add_fields(
                     recevier, {
                         'task_id': call_task['task_id'],
+                        'question_type': call_task['question_type'],
                         'message': get_personalized_message(
                             template, recevier)
                     }), call_task["receivers"]))

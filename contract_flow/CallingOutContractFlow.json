@@ -1,6 +1,28 @@
 {
   "modules": [
     {
+      "id": "febdb221-bf16-4c0d-a75e-1c88fb1a5edd",
+      "type": "SetLoggingBehavior",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "c2087f13-6a09-4a81-9051-70a8507595a1"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "LoggingBehavior",
+          "value": "Enable"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 161,
+          "y": 50
+        }
+      }
+    },
+    {
       "id": "c2087f13-6a09-4a81-9051-70a8507595a1",
       "type": "SetVoice",
       "branches": [
@@ -17,8 +39,8 @@
       ],
       "metadata": {
         "position": {
-          "x": 242,
-          "y": 51
+          "x": 387,
+          "y": 114
         }
       }
     },
@@ -29,37 +51,9 @@
       "parameters": [],
       "metadata": {
         "position": {
-          "x": 881,
-          "y": 233
+          "x": 1331,
+          "y": 309
         }
-      }
-    },
-    {
-      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
-      "type": "PlayPrompt",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "169c250e-e537-45df-b14f-f458c70bd564"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Text",
-          "value": "message",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "TextToSpeechType",
-          "value": "text"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 297,
-          "y": 342
-        },
-        "useDynamic": true
       }
     },
     {
@@ -90,7 +84,7 @@
       "parameters": [
         {
           "name": "Text",
-          "value": "Said ok, if you got the message. Or, said repeat to listen the message again!",
+          "value": "Said \"repeat\" to listen it again. Or, said \"ok\", if you got the message.",
           "namespace": null
         },
         {
@@ -136,16 +130,16 @@
       ],
       "metadata": {
         "position": {
-          "x": 664,
-          "y": 232
+          "x": 948,
+          "y": 86
         },
         "conditionMetadata": [
           {
-            "id": "c8949aaa-419c-494a-b4ed-1d27fba9e5aa",
+            "id": "9d88aa3e-9866-46cb-95ae-b520e945c1a0",
             "value": "CalloutBot_OkIntent"
           },
           {
-            "id": "5a273332-b3aa-4b4e-bb82-18997d1903af",
+            "id": "1b238081-9f6a-4071-951e-4f8d9de3bea6",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -158,11 +152,356 @@
         }
       },
       "target": "Lex"
+    },
+    {
+      "id": "beddd34a-78e7-4feb-86fb-98e92414af0a",
+      "type": "GetUserInput",
+      "branches": [
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_YesIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_NoIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_RepeatIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "Said repeat if you want to listen again. Please say \"Yes\" or \"No\" to end the call.",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        },
+        {
+          "name": "BotName",
+          "value": "CalloutBot_ExcelLexBot"
+        },
+        {
+          "name": "BotAlias",
+          "value": "$LATEST"
+        },
+        {
+          "name": "BotRegion",
+          "value": "us-east-1"
+        },
+        {
+          "name": "Parameter",
+          "key": "customer_number",
+          "value": "Customer Number",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "username",
+          "value": "username",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "message",
+          "value": "message",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "userId",
+          "value": "id",
+          "namespace": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 959,
+          "y": 396
+        },
+        "conditionMetadata": [
+          {
+            "id": "9e624cca-efcf-44e8-8434-f384cd14795e",
+            "value": "CalloutBot_YesIntent"
+          },
+          {
+            "id": "43682924-5160-4449-82f9-59e0482c7efd",
+            "value": "CalloutBot_NoIntent"
+          },
+          {
+            "id": "025f7428-1353-423b-88ac-4f81b366d76f",
+            "value": "CalloutBot_RepeatIntent"
+          }
+        ],
+        "useDynamic": false,
+        "dynamicMetadata": {
+          "customer_number": true,
+          "username": true,
+          "message": true,
+          "userId": true
+        }
+      },
+      "target": "Lex"
+    },
+    {
+      "id": "cef2915a-1888-4223-92b2-23933f149ae7",
+      "type": "GetUserInput",
+      "branches": [
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_BIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_CIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_DIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_EIntent",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_RepeatIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "Said \"Repeat\" to listen the question again. Or tell me A.B.C.D or E to end the call.",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        },
+        {
+          "name": "BotName",
+          "value": "CalloutBot_ExcelLexBot"
+        },
+        {
+          "name": "BotAlias",
+          "value": "$LATEST"
+        },
+        {
+          "name": "BotRegion",
+          "value": "us-east-1"
+        },
+        {
+          "name": "Parameter",
+          "key": "customer_number",
+          "value": "Customer Number",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "username",
+          "value": "username",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "message",
+          "value": "message",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "userId",
+          "value": "id",
+          "namespace": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 971,
+          "y": 751
+        },
+        "conditionMetadata": [
+          {
+            "id": "e5a2e0cd-8427-4206-90a5-fd3190a455e3",
+            "value": "CalloutBot_AIntent"
+          },
+          {
+            "id": "a4dfa6ad-4f1c-4f92-8f10-15592d0fb20b",
+            "value": "CalloutBot_BIntent"
+          },
+          {
+            "id": "05ad50d5-a3da-4698-a281-c710df0c0e82",
+            "value": "CalloutBot_CIntent"
+          },
+          {
+            "id": "7c15d300-3d32-4351-873c-70d9e7377401",
+            "value": "CalloutBot_DIntent"
+          },
+          {
+            "id": "4065768e-e7f7-4ad3-af40-1f668ad9bb89",
+            "value": "CalloutBot_EIntent"
+          },
+          {
+            "id": "3e8594d3-d389-480d-9d77-292fe111fa0a",
+            "value": "CalloutBot_RepeatIntent"
+          }
+        ],
+        "useDynamic": false,
+        "dynamicMetadata": {
+          "customer_number": true,
+          "username": true,
+          "message": true,
+          "userId": true
+        }
+      },
+      "target": "Lex"
+    },
+    {
+      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "message",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 342,
+          "y": 379
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "d1c063ab-ed4e-4dde-b881-328025ac7720",
+      "type": "CheckAttribute",
+      "branches": [
+        {
+          "condition": "NoMatch",
+          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "OK",
+          "transition": "169c250e-e537-45df-b14f-f458c70bd564"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "Yes/No",
+          "transition": "beddd34a-78e7-4feb-86fb-98e92414af0a"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "Multiple Choice",
+          "transition": "cef2915a-1888-4223-92b2-23933f149ae7"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "question_type"
+        },
+        {
+          "name": "Namespace",
+          "value": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 653,
+          "y": 72
+        },
+        "conditionMetadata": [
+          {
+            "id": "1421c18a-712d-454d-bc74-21060e8a121a",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "OK"
+          },
+          {
+            "id": "2e97e9b0-0f3a-4298-b924-2dd269bb67d0",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Yes/No"
+          },
+          {
+            "id": "02435d81-2177-4c9a-a850-32d589eafc25",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Multiple Choice"
+          }
+        ]
+      }
     }
   ],
   "version": "1",
   "type": "contactFlow",
-  "start": "c2087f13-6a09-4a81-9051-70a8507595a1",
+  "start": "febdb221-bf16-4c0d-a75e-1c88fb1a5edd",
   "metadata": {
     "entryPointPosition": {
       "x": 20,
@@ -173,6 +512,6 @@
     "description": null,
     "type": "contactFlow",
     "status": "published",
-    "hash": "574c685dfbe15643216b9d652d68da393dc04d727fdbe00b33f699e974d24a31"
+    "hash": "0be8a96e537d4a58e49681442c870442d7ad8ccbb43f8ba2a02872701e1a63b7"
   }
 }
