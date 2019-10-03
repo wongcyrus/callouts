@@ -18,6 +18,9 @@ def lambda_handler(event, context):
 
     message["response_intent"] = event["Details"]["Parameters"][
         "response_intent"]
+    message["error"] = "null"
+
+    message["status"] = "CallCompleted"
 
     stepfunctions_client.send_task_success(taskToken=taskToken,
                                            output=json.dumps(message))

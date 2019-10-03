@@ -17,7 +17,8 @@ def lambda_handler(event, context):
     body = json.loads(event["Records"][0]["body"])
     print(body)
     message = body['Message']
-    message['taskToken']=body["TaskToken"]
+    task_token = body["TaskToken"]
+    message['taskToken']=task_token
     print(message)
 
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
@@ -30,17 +31,18 @@ def lambda_handler(event, context):
             Attributes=message)
     except Exception as err:
         print(err)
-        event['status'] = "NotCallable"
-        event['error'] = str(err)
+        message['status'] = "NotCallable"
+        message['error'] = str(err)
+        message['response_intent'] = "null"
+        del message['taskToken']
+        del message['response_hanlder_function_arn']
         
-        print(f"Sending task failure for task ID {message['taskToken']}")
+        print(f"Sending task failure for task ID {task_token}")
         stepfunctions_client.send_task_success(
-            taskToken=message["taskToken"],
-            output=json.dumps(event)
+            taskToken=task_token,
+            output=json.dumps(message)
         )
         return event
-
-                                 
                                         
     event['status'] = "Calling"
     return event

@@ -63,12 +63,12 @@ Resources:
       Policies:
         - StepFunctionsExecutionPolicy:
             StateMachineName:
-              !GetAtt [ CalloutStateMachine, Name ]
+              !GetAtt CalloutStateMachine.Name
       Environment:
         Variables:
           CallSqsQueueUrl: !Ref CallSqsQueue
           CalloutStateMachineArn: !Ref CalloutStateMachine
-          ResponseHanlderFunctionArn: !GetAtt [ ResponseHanlderFunction, Arn ]
+          ResponseHanlderFunctionArn: !GetAtt ResponseHanlderFunction.Arn
       Events:
         CallSQSEvent:
           Type: SQS
@@ -93,7 +93,7 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       RedrivePolicy: 
-        deadLetterTargetArn: !GetAtt [ CallDeadLetterQueue, Arn ]
+        deadLetterTargetArn: !GetAtt CallDeadLetterQueue.Arn
         maxReceiveCount: 1
   CallDeadLetterQueue: 
     Type: AWS::SQS::Queue
@@ -102,10 +102,17 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       RedrivePolicy: 
-        deadLetterTargetArn: !GetAtt [ AsynCalloutDeadLetterQueue, Arn ]
+        deadLetterTargetArn: !GetAtt AsynCalloutDeadLetterQueue.Arn
         maxReceiveCount: 1
   AsynCalloutDeadLetterQueue: 
     Type: AWS::SQS::Queue
+
+  CallResultDynamoDBTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String  
         
   CalloutStatesExecutionRole:
     Type: AWS::IAM::Role
@@ -113,11 +120,11 @@ Resources:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Effect: "Allow"
+          - Effect: Allow
             Principal:
               Service:
                 - !Sub states.${AWS::Region}.amazonaws.com
-            Action: "sts:AssumeRole"
+            Action: sts:AssumeRole
       Path: "/"
       Policies:
         - PolicyName: StatesExecutionPolicy
@@ -126,9 +133,13 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - "sqs:SendMessage"
+                  - sqs:SendMessage
                 Resource: !GetAtt AsynCalloutQueue.Arn
-
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                Resource: !GetAtt CallResultDynamoDBTable.Arn
+                
   CalloutStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -162,6 +173,25 @@ Resources:
                               "TaskToken.$": "$$.Task.Token"
                            }
                         },
+                        "Next": "Save call result"
+                      },
+                      "Save call result": {
+                        "Type": "Task",
+                        "Resource": "arn:aws:states:::dynamodb:putItem",
+                        "Parameters": {
+                          "TableName": "${CallResultDynamoDBTable}",
+                          "Item": {
+                            "id": {"S.$": "$.id"},
+                            "username": {"S.$": "$.username"},
+                            "message": {"S.$": "$.message"},
+                            "phone_number": {"S.$": "$.phone_number"},
+                            "question_type": {"S.$": "$.question_type"},
+                            "status": {"S.$": "$.status"},
+                            "response_intent": {"S.$": "$.response_intent"},
+                            "error": {"S.$": "$.error"}
+                          }
+                        },
+                        "ResultPath": "$.Result",
                         "End": true
                       }
                     }
@@ -174,7 +204,8 @@ Resources:
             }                       
           - 
             AsynCalloutQueue: !Ref AsynCalloutQueue
-      RoleArn: !GetAtt [ CalloutStatesExecutionRole, Arn ]
+            CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
+      RoleArn: !GetAtt CalloutStatesExecutionRole.Arn
       
       
 Outputs:
