@@ -198,7 +198,8 @@ Resources:
                             "question_type": {"S.$": "$.question_type"},
                             "status": {"S.$": "$.status"},
                             "answer": {"S.$": "$.answer"},
-                            "error": {"S.$": "$.error"}
+                            "error": {"S.$": "$.error"},
+                            "call_at": {"S.$": "$.call_at"}
                           }
                         },
                         "ResultPath": "$.Result",

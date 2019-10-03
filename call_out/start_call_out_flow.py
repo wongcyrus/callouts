@@ -45,7 +45,9 @@ def lambda_handler(event, context):
                         'message':
                         get_personalized_message(template, recevier),
                         'response_hanlder_function_arn':
-                        os.environ['ResponseHanlderFunctionArn']
+                        os.environ['ResponseHanlderFunctionArn'],
+                        'call_at':
+                        datetime.datetime.utcnow().isoformat()
                     }), call_task["receivers"]))
 
     data = body_transform(event['Records'][0]['body'])
