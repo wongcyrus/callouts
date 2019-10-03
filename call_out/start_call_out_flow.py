@@ -6,6 +6,8 @@ sys.path.append("/opt/")
 from jinja2 import Environment, BaseLoader
 import boto3
 
+from sqs_helper import *
+
 stepfunctions = boto3.client('stepfunctions')
 sqs = boto3.client('sqs')
 
@@ -28,21 +30,17 @@ def lambda_handler(event, context):
             map(
                 lambda recevier: add_fields(
                     recevier, {
-                        'task_id': call_task['task_id'],
-                        'question_type': call_task['question_type'],
-                        'message': get_personalized_message(
-                            template, recevier)
+                        'task_id':
+                        call_task['task_id'],
+                        'question_type':
+                        call_task['question_type'],
+                        'message':
+                        get_personalized_message(template, recevier),
+                        'response_hanlder_function_arn':
+                        os.environ['ResponseHanlderFunctionArn']
                     }), call_task["receivers"]))
 
-    receiptHandles = list(
-        map(
-            lambda record: {
-                "Id": record["messageId"],
-                "ReceiptHandle": record["receiptHandle"]
-            }, event['Records']))
-
     data = body_transform(event['Records'][0]['body'])
-
     print(data)
 
     name = '{0:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()) + "-callout"
@@ -51,5 +49,5 @@ def lambda_handler(event, context):
         name=name,
         input=json.dumps(data))
 
-    response = sqs.delete_message_batch(QueueUrl=os.environ['CallSqsQueueUrl'],
-                                        Entries=receiptHandles)
+    delete_message_batch(os.environ['CallSqsQueueUrl'], event)
+    return response

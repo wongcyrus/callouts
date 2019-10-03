@@ -3,13 +3,15 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   callout
 Parameters:
+  InstanceArn:
+    Type: String
   ContactFlowArn:
     Type: String
   SourcePhoneNumber:
     Type: String
 Globals:
   Function:
-    Timeout: 180
+    Timeout: 30
     Tracing: Active
     Runtime: python3.7  
 Resources:
@@ -24,12 +26,23 @@ Resources:
             - Effect: Allow
               Action:
                - connect:StartOutboundVoiceContact
-              Resource: "*"
+              Resource: !Sub ${InstanceArn}/*
+            - Effect: Allow
+              Action:
+               - states:SendTaskSuccess 
+              Resource: !Ref CalloutStateMachine      
       Environment:
         Variables:
           ContactFlowArn: !Ref ContactFlowArn
           SourcePhoneNumber: !Ref SourcePhoneNumber
-
+          AsynCalloutQueueUrl: !Ref AsynCalloutQueue
+      Events:
+        CallSQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt AsynCalloutQueue.Arn
+            BatchSize: 1
+            
   LibLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -45,8 +58,7 @@ Resources:
       Handler: start_call_out_flow.lambda_handler
       CodeUri: call_out/
       Layers:
-        - !Ref LibLayer      
-      Timeout: 30
+        - !Ref LibLayer     
       ReservedConcurrentExecutions: 1
       Policies:
         - StepFunctionsExecutionPolicy:
@@ -55,14 +67,28 @@ Resources:
       Environment:
         Variables:
           CallSqsQueueUrl: !Ref CallSqsQueue
-          CalloutStateMachineArn: !Ref CalloutStateMachine      
+          CalloutStateMachineArn: !Ref CalloutStateMachine
+          ResponseHanlderFunctionArn: !GetAtt [ ResponseHanlderFunction, Arn ]
       Events:
         CallSQSEvent:
           Type: SQS
           Properties:
             Queue: !GetAtt CallSqsQueue.Arn
             BatchSize: 1
-            
+
+  ResponseHanlderFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      Handler: response_handler.lambda_handler
+      CodeUri: call_out/
+      Policies:
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+               - states:SendTaskSuccess
+              Resource: !Ref CalloutStateMachine
+              
   CallSqsQueue:
     Type: AWS::SQS::Queue
     Properties: 
@@ -71,7 +97,16 @@ Resources:
         maxReceiveCount: 1
   CallDeadLetterQueue: 
     Type: AWS::SQS::Queue
-
+    
+  AsynCalloutQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      RedrivePolicy: 
+        deadLetterTargetArn: !GetAtt [ AsynCalloutDeadLetterQueue, Arn ]
+        maxReceiveCount: 1
+  AsynCalloutDeadLetterQueue: 
+    Type: AWS::SQS::Queue
+        
   CalloutStatesExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -91,8 +126,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - "lambda:InvokeFunction"
-                Resource: "*"
+                  - "sqs:SendMessage"
+                Resource: !GetAtt AsynCalloutQueue.Arn
 
   CalloutStateMachine:
     Type: AWS::StepFunctions::StateMachine
@@ -118,7 +153,15 @@ Resources:
                     "States": {
                       "Callout with AWS Connect": {
                         "Type": "Task",
-                        "Resource": "arn:aws:lambda:us-east-1:467005446488:function:it114115callout-CalloutFunction-J6DYCOUO4GYQ",
+                        "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+                        "TimeoutSeconds": 300,
+                        "Parameters": {
+                          "QueueUrl": "${AsynCalloutQueue}",
+                          "MessageBody": {
+                              "Message.$":"$",
+                              "TaskToken.$": "$$.Task.Token"
+                           }
+                        },
                         "End": true
                       }
                     }
@@ -130,7 +173,7 @@ Resources:
               }
             }                       
           - 
-            CalloutFunction: !GetAtt [ CalloutFunction, Arn ]
+            AsynCalloutQueue: !Ref AsynCalloutQueue
       RoleArn: !GetAtt [ CalloutStatesExecutionRole, Arn ]
       
       

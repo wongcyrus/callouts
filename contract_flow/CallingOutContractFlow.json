@@ -23,6 +23,79 @@
       }
     },
     {
+      "id": "d1c063ab-ed4e-4dde-b881-328025ac7720",
+      "type": "CheckAttribute",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "OK",
+          "transition": "169c250e-e537-45df-b14f-f458c70bd564"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "Yes/No",
+          "transition": "beddd34a-78e7-4feb-86fb-98e92414af0a"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "Multiple Choice",
+          "transition": "cef2915a-1888-4223-92b2-23933f149ae7"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "question_type"
+        },
+        {
+          "name": "Namespace",
+          "value": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 653,
+          "y": 72
+        },
+        "conditionMetadata": [
+          {
+            "id": "37fb886c-2345-410e-97b3-dc1c1fd4718e",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "OK"
+          },
+          {
+            "id": "64a70ac5-2077-4b6d-b4aa-8588c44af0c8",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Yes/No"
+          },
+          {
+            "id": "a717bf48-f5f9-443b-9e23-70f220c69da0",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Multiple Choice"
+          }
+        ]
+      }
+    },
+    {
       "id": "c2087f13-6a09-4a81-9051-70a8507595a1",
       "type": "SetVoice",
       "branches": [
@@ -45,14 +118,42 @@
       }
     },
     {
-      "id": "baaa8643-4fb6-4c9e-b00b-40043ad53111",
+      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "message",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 342,
+          "y": 379
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
       "type": "Disconnect",
       "branches": [],
       "parameters": [],
       "metadata": {
         "position": {
-          "x": 1331,
-          "y": 309
+          "x": 1656,
+          "y": 370
         }
       }
     },
@@ -64,7 +165,7 @@
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_OkIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
@@ -78,7 +179,7 @@
         },
         {
           "condition": "Error",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
         }
       ],
       "parameters": [
@@ -135,11 +236,11 @@
         },
         "conditionMetadata": [
           {
-            "id": "9d88aa3e-9866-46cb-95ae-b520e945c1a0",
+            "id": "1905f691-de8a-4d5d-9d0f-f520d7c88d63",
             "value": "CalloutBot_OkIntent"
           },
           {
-            "id": "1b238081-9f6a-4071-951e-4f8d9de3bea6",
+            "id": "835e3950-283b-43e2-a21e-d1427c81a185",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -158,30 +259,30 @@
       "type": "GetUserInput",
       "branches": [
         {
-          "condition": "NoMatch",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "Error",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
-        },
-        {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_YesIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_NoIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_RepeatIntent",
           "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
         }
       ],
       "parameters": [
@@ -238,15 +339,15 @@
         },
         "conditionMetadata": [
           {
-            "id": "9e624cca-efcf-44e8-8434-f384cd14795e",
+            "id": "23032ecf-b47b-4f1c-92c3-ba13ef5bd0bb",
             "value": "CalloutBot_YesIntent"
           },
           {
-            "id": "43682924-5160-4449-82f9-59e0482c7efd",
+            "id": "2ada4452-2b05-4d5c-8ce2-760300558278",
             "value": "CalloutBot_NoIntent"
           },
           {
-            "id": "025f7428-1353-423b-88ac-4f81b366d76f",
+            "id": "5ea57c73-1f49-4072-8ff2-76334d93097e",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -265,48 +366,48 @@
       "type": "GetUserInput",
       "branches": [
         {
-          "condition": "NoMatch",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "Error",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
-        },
-        {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_AIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_BIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_CIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_DIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_EIntent",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
         },
         {
           "condition": "Evaluate",
           "conditionType": "Equals",
           "conditionValue": "CalloutBot_RepeatIntent",
           "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
         }
       ],
       "parameters": [
@@ -363,27 +464,27 @@
         },
         "conditionMetadata": [
           {
-            "id": "e5a2e0cd-8427-4206-90a5-fd3190a455e3",
+            "id": "ff930ed9-254c-4b40-87a8-cf72338ed16c",
             "value": "CalloutBot_AIntent"
           },
           {
-            "id": "a4dfa6ad-4f1c-4f92-8f10-15592d0fb20b",
+            "id": "bf6c215d-da4a-4d96-927b-88d227ddf897",
             "value": "CalloutBot_BIntent"
           },
           {
-            "id": "05ad50d5-a3da-4698-a281-c710df0c0e82",
+            "id": "3791d7d8-5f15-4d27-84d3-b9acef5e31cb",
             "value": "CalloutBot_CIntent"
           },
           {
-            "id": "7c15d300-3d32-4351-873c-70d9e7377401",
+            "id": "6113bcce-2995-43c3-873b-188df99ccf7f",
             "value": "CalloutBot_DIntent"
           },
           {
-            "id": "4065768e-e7f7-4ad3-af40-1f668ad9bb89",
+            "id": "7c743c1c-9e30-4825-a8f2-35a0c0726f54",
             "value": "CalloutBot_EIntent"
           },
           {
-            "id": "3e8594d3-d389-480d-9d77-292fe111fa0a",
+            "id": "bfc52864-42db-450d-a7db-75cbff31c748",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -398,105 +499,46 @@
       "target": "Lex"
     },
     {
-      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
-      "type": "PlayPrompt",
+      "id": "b0447a99-c341-4bb9-b2e1-748775536ea1",
+      "type": "InvokeExternalResource",
       "branches": [
         {
           "condition": "Success",
-          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
         }
       ],
       "parameters": [
         {
-          "name": "Text",
-          "value": "message",
+          "name": "FunctionArn",
+          "value": "response_hanlder_function_arn",
           "namespace": "User Defined"
         },
         {
-          "name": "TextToSpeechType",
-          "value": "text"
+          "name": "TimeLimit",
+          "value": "8"
+        },
+        {
+          "name": "Parameter",
+          "key": "response_intent",
+          "value": "Lex.IntentName",
+          "namespace": "System"
         }
       ],
       "metadata": {
         "position": {
-          "x": 342,
-          "y": 379
+          "x": 1411,
+          "y": 395
+        },
+        "dynamicMetadata": {
+          "response_intent": true
         },
         "useDynamic": true
-      }
-    },
-    {
-      "id": "d1c063ab-ed4e-4dde-b881-328025ac7720",
-      "type": "CheckAttribute",
-      "branches": [
-        {
-          "condition": "NoMatch",
-          "transition": "baaa8643-4fb6-4c9e-b00b-40043ad53111"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "OK",
-          "transition": "169c250e-e537-45df-b14f-f458c70bd564"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "Yes/No",
-          "transition": "beddd34a-78e7-4feb-86fb-98e92414af0a"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "Multiple Choice",
-          "transition": "cef2915a-1888-4223-92b2-23933f149ae7"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Attribute",
-          "value": "question_type"
-        },
-        {
-          "name": "Namespace",
-          "value": "User Defined"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 653,
-          "y": 72
-        },
-        "conditionMetadata": [
-          {
-            "id": "1421c18a-712d-454d-bc74-21060e8a121a",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "OK"
-          },
-          {
-            "id": "2e97e9b0-0f3a-4298-b924-2dd269bb67d0",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Yes/No"
-          },
-          {
-            "id": "02435d81-2177-4c9a-a850-32d589eafc25",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Multiple Choice"
-          }
-        ]
-      }
+      },
+      "target": "Lambda"
     }
   ],
   "version": "1",
@@ -512,6 +554,6 @@
     "description": null,
     "type": "contactFlow",
     "status": "published",
-    "hash": "0be8a96e537d4a58e49681442c870442d7ad8ccbb43f8ba2a02872701e1a63b7"
+    "hash": "c894bd7207d0c76ebd05425a8407cb6c5fa11ec7560b79fd8457a43741ed892d"
   }
 }
