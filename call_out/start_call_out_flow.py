@@ -34,6 +34,12 @@ def lambda_handler(event, context):
                         call_task['task_id'],
                         'question_type':
                         call_task['question_type'],
+                        'status':
+                        "DropCall",
+                        'response_intent':
+                        "null",
+                        "error":
+                        "null",
                         'message':
                         get_personalized_message(template, recevier),
                         'response_hanlder_function_arn':

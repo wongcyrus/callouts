@@ -19,6 +19,8 @@ def lambda_handler(event, context):
     message = body['Message']
     task_token = body["TaskToken"]
     message['taskToken']=task_token
+    message['status'] = "DropCall"
+    message['response_intent'] = "null"
     print(message)
 
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
@@ -33,7 +35,6 @@ def lambda_handler(event, context):
         print(err)
         message['status'] = "NotCallable"
         message['error'] = str(err)
-        message['response_intent'] = "null"
         del message['taskToken']
         del message['response_hanlder_function_arn']
         

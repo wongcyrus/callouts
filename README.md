@@ -33,21 +33,26 @@ sqs = boto3.resource('sqs')
 queue = sqs.get_queue_by_name(
     QueueName="it114115callout-CallSqsQueue-54UT6EDQV492")
 
-call1 = {"id": "001", "username": "Lee Wang", "phone_number": "+85256216698"}
+test_phone_list = ["39282662", "12345678"]
 
-call2 = {"id": "002", "username": "Cyrus Wong", "phone_number": "+85239282662"}
-
-call_list = [call1, call2]
+task_id = "call_test"
+call_list = [{
+    "id": task_id + "_" + str(i),
+    "username": "Student_" + str(i),
+    'phone_number': "+852" + phone_number
+} for i, phone_number in enumerate(test_phone_list)]
 
 call_task = {
-    "task_id": "Calling",
-    "question_type": "OK",  # OK, Yes/No, Multiple Choice
-    "message_template": "Hi {{ username }}, This is a test!",
+    "task_id": task_id,
+    "question_type": "Yes/No",  # OK, Yes/No, Multiple Choice
+    "message_template": "Hi {{ username }}, Will you attend tomorrow class?",
     "receivers": call_list
 }
 
+print(call_task)
 response = queue.send_message(MessageBody=json.dumps(call_task))
 
 print(response)
+
 ```
 

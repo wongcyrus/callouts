@@ -165,7 +165,7 @@ Resources:
                       "Callout with AWS Connect": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
-                        "TimeoutSeconds": 300,
+                        "TimeoutSeconds": 30,
                         "Parameters": {
                           "QueueUrl": "${AsynCalloutQueue}",
                           "MessageBody": {
@@ -173,8 +173,18 @@ Resources:
                               "TaskToken.$": "$$.Task.Token"
                            }
                         },
+                        "Catch": [ {
+                            "ErrorEquals": [ "States.Timeout" ],
+                            "ResultPath": null,
+                            "Next": "Call Timeout"
+                         } ],
                         "Next": "Save call result"
                       },
+                      "Call Timeout": {
+                        "Type": "Pass",
+                        "ResultPath": null,
+                        "Next": "Save call result"
+                      }, 
                       "Save call result": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::dynamodb:putItem",
