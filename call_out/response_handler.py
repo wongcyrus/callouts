@@ -19,6 +19,9 @@ def lambda_handler(event, context):
     message["response_intent"] = event["Details"]["Parameters"][
         "response_intent"]
     message["error"] = "null"
+    message["answer"] = message["response_intent"].replace("CalloutBot_",
+                                                           "").replace(
+                                                               "Intent", "")
 
     message["status"] = "CallCompleted"
 

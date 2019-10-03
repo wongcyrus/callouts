@@ -197,7 +197,7 @@ Resources:
                             "phone_number": {"S.$": "$.phone_number"},
                             "question_type": {"S.$": "$.question_type"},
                             "status": {"S.$": "$.status"},
-                            "response_intent": {"S.$": "$.response_intent"},
+                            "answer": {"S.$": "$.answer"},
                             "error": {"S.$": "$.error"}
                           }
                         },

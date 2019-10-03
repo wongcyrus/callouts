@@ -38,6 +38,8 @@ def lambda_handler(event, context):
                         "DropCall",
                         'response_intent':
                         "null",
+                        "answer":
+                        "null",
                         "error":
                         "null",
                         'message':
