@@ -20,39 +20,41 @@ def lambda_handler(event, context):
 
     body = json.loads(event["Records"][0]["body"])
     print(body)
-    recevier = body['Message']
+    receiver = body['Message']
     task_token = body["TaskToken"]
-    recevier['taskToken']=task_token
-    recevier['status'] = "DropCall"
-    recevier['response_intent'] = "null"
+    receiver['taskToken']=task_token
+    receiver['status'] = "DropCall"
+    receiver['response_intent'] = "null"
     # You can only pass str into the start_outbound_voice_contact!
-    recevier["questions"] = json.dumps(get_questions(recevier))
-    recevier["i"] = "0"
+    receiver["questions"] = json.dumps(get_questions(receiver))
+    receiver["i"] = "0"
     
-    recevier["greeting"] = get_personalized_message(recevier["greeting"], recevier)
-    recevier["ending"] = get_personalized_message(recevier["ending"], recevier)
+    receiver["greeting"] = get_personalized_message(receiver["greeting"], receiver)
+    receiver["ending"] = get_personalized_message(receiver["ending"], receiver)
     
-    print(recevier)
+    print(receiver)
 
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
     try:
         response = client.start_outbound_voice_contact(
-            DestinationPhoneNumber=recevier['phone_number'],
+            DestinationPhoneNumber=receiver['phone_number'],
             ContactFlowId=contract_flow_id,
             InstanceId=instance_id,
             SourcePhoneNumber=os.environ['SourcePhoneNumber'],
-            Attributes=recevier)
+            Attributes=receiver)
     except Exception as err:
         print(err)
-        recevier['status'] = "NotCallable"
-        recevier['error'] = str(err)
-        del recevier['taskToken']
-        del recevier['response_hanlder_function_arn']
+        receiver['status'] = "NotCallable"
+        receiver['error'] = str(err)
+        del message["taskToken"]
+        del message["response_hanlder_function_arn"]
+        del message["iterator_function_arn"]
+        del message["send_task_success_function_arn"]
         
         print(f"Sending task failure for task ID {task_token}")
         stepfunctions_client.send_task_success(
             taskToken=task_token,
-            output=json.dumps(recevier)
+            output=json.dumps(receiver)
         )
         return event
                                         

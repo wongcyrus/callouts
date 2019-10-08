@@ -38,8 +38,10 @@ queue = sqs.get_queue_by_name(
 test_phone_list = ["34567891", "12345678"]
 
 task_id = "calling"
+task_id = "calling2"
 call_list = [{
     "id": task_id + "_" + str(i),
+    "receiver_id": str(i),
     "username": "Student " + str(i),
     'phone_number': "+852" + phone_number
 } for i, phone_number in enumerate(test_phone_list)]
@@ -47,16 +49,24 @@ call_list = [{
 questions = [
     {
         "question_type": "Yes/No",  # OK, Yes/No, Multiple Choice
-        "question_template": "Hi {{ username }}, test 1!"
+        "question_template": "Are you using Amazon Connect?"
     },
     {
-        "question_type": "Multiple Choice",  # OK, Yes/No, Multiple Choice
-        "question_template": "Answer the letter now shown in project!"
-    }
+        "question_type":
+        "Multiple Choice",  # OK, Yes/No, Multiple Choice
+        "question_template":
+        "How do you know Amazon Connect? A. News Letter, B. Social Media, C. AWS Event, D. AWS Website."
+    },
+    {
+        "question_type": "OK",  # OK, Yes/No, Multiple Choice
+        "question_template": "Do you think it is OK?"
+    },
 ]
 
 call_task = {
     "task_id": task_id,
+    "greeting": "Hi {{ username }}, This is a simple survey.",
+    "ending": "Good Bye {{ username }} and have a nice day!",
     "questions": questions,
     "receivers": call_list
 }

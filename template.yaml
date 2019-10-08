@@ -122,11 +122,23 @@ Resources:
     Type: AWS::SQS::Queue
 
   CallResultDynamoDBTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      PrimaryKey:
-        Name: id
-        Type: String  
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        -
+          AttributeName: "receiver_id"
+          AttributeType: "S"
+        -
+          AttributeName: "task_id"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "task_id"
+          KeyType: "HASH"
+        -
+          AttributeName: "receiver_id"
+          KeyType: "RANGE"
         
   CalloutStatesExecutionRole:
     Type: AWS::IAM::Role
@@ -205,7 +217,8 @@ Resources:
                         "Parameters": {
                           "TableName": "${CallResultDynamoDBTable}",
                           "Item": {
-                            "id": {"S.$": "$.id"},
+                            "receiver_id": {"S.$": "$.receiver_id"},
+                            "task_id": {"S.$": "$.task_id"},
                             "username": {"S.$": "$.username"},
                             "phone_number": {"S.$": "$.phone_number"},
                             "status": {"S.$": "$.status"},

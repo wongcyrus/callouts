@@ -12,16 +12,16 @@ sqs = boto3.client('sqs')
 def lambda_handler(event, context):
     print(event)
 
-    def add_fields(recevier, fields):
-        recevier.update(fields)
-        return recevier
+    def add_fields(receiver, fields):
+        receiver.update(fields)
+        return receiver
 
     def body_transform(call_task):
         call_task = json.loads(call_task)
         return list(
             map(
-                lambda recevier: add_fields(
-                    recevier, {
+                lambda receiver: add_fields(
+                    receiver, {
                         'task_id':
                         call_task['task_id'],
                         'status':
