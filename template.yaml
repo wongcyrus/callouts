@@ -20,6 +20,8 @@ Resources:
     Properties:
       Handler: send_call.lambda_handler
       CodeUri: call_out/
+      Layers:
+        - !Ref LibLayer           
       Policies:
         - Version: '2012-10-17' # Policy Document
           Statement:
@@ -57,8 +59,6 @@ Resources:
     Properties:
       Handler: start_call_out_flow.lambda_handler
       CodeUri: call_out/
-      Layers:
-        - !Ref LibLayer     
       ReservedConcurrentExecutions: 1
       Policies:
         - StepFunctionsExecutionPolicy:
@@ -69,6 +69,8 @@ Resources:
           CallSqsQueueUrl: !Ref CallSqsQueue
           CalloutStateMachineArn: !Ref CalloutStateMachine
           ResponseHanlderFunctionArn: !GetAtt ResponseHanlderFunction.Arn
+          IteratorFunctionArn: !GetAtt IteratorFunction.Arn
+          SendTaskSuccessFunctionArn: !GetAtt SendTaskSuccessFunction.Arn
       Events:
         CallSQSEvent:
           Type: SQS
@@ -81,6 +83,12 @@ Resources:
     Properties:
       Handler: response_handler.lambda_handler
       CodeUri: call_out/
+
+  SendTaskSuccessFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      Handler: send_task_success.lambda_handler
+      CodeUri: call_out/
       Policies:
         - Version: '2012-10-17' # Policy Document
           Statement:
@@ -88,6 +96,12 @@ Resources:
               Action:
                - states:SendTaskSuccess
               Resource: !Ref CalloutStateMachine
+              
+  IteratorFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      Handler: iterator.lambda_handler
+      CodeUri: call_out/
               
   CallSqsQueue:
     Type: AWS::SQS::Queue
@@ -165,7 +179,7 @@ Resources:
                       "Callout with AWS Connect": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
-                        "TimeoutSeconds": 30,
+                        "TimeoutSeconds": 180,
                         "Parameters": {
                           "QueueUrl": "${AsynCalloutQueue}",
                           "MessageBody": {
@@ -193,11 +207,9 @@ Resources:
                           "Item": {
                             "id": {"S.$": "$.id"},
                             "username": {"S.$": "$.username"},
-                            "message": {"S.$": "$.message"},
                             "phone_number": {"S.$": "$.phone_number"},
-                            "question_type": {"S.$": "$.question_type"},
                             "status": {"S.$": "$.status"},
-                            "answer": {"S.$": "$.answer"},
+                            "answers": {"S.$": "$.answers"},
                             "error": {"S.$": "$.error"},
                             "call_at": {"S.$": "$.call_at"}
                           }

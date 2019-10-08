@@ -28,30 +28,43 @@ sudo ./get_layer_packages.sh
 import boto3
 import json
 import pprint
+import sys
 
 sqs = boto3.resource('sqs')
 
 queue = sqs.get_queue_by_name(
     QueueName="it114115callout-CallSqsQueue-1GNVSZGI92ZYM")
 
-test_phone_list = ["39280000", "12345678", "97979792"]
+test_phone_list = ["34567891", "12345678"]
 
-task_id = "call_test"
+task_id = "calling"
 call_list = [{
     "id": task_id + "_" + str(i),
     "username": "Student " + str(i),
     'phone_number': "+852" + phone_number
 } for i, phone_number in enumerate(test_phone_list)]
 
+questions = [
+    {
+        "question_type": "Yes/No",  # OK, Yes/No, Multiple Choice
+        "question_template": "Hi {{ username }}, test 1!"
+    },
+    {
+        "question_type": "Multiple Choice",  # OK, Yes/No, Multiple Choice
+        "question_template": "Answer the letter now shown in project!"
+    }
+]
+
 call_task = {
     "task_id": task_id,
-    "question_type": "Yes/No",  # OK, Yes/No, Multiple Choice
-    "message_template": "Hi {{ username }}, answer me A to E!",
+    "questions": questions,
     "receivers": call_list
 }
 
 pp = pprint.PrettyPrinter(compact=True)
 pp.pprint(call_task)
+
+print("Json Text in KB: " + str(sys.getsizeof(json.dumps(call_task)) / 1024))
 
 response = queue.send_message(MessageBody=json.dumps(call_task))
 pp.pprint(response)

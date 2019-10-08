@@ -61,12 +61,12 @@
       ],
       "metadata": {
         "position": {
-          "x": 653,
-          "y": 72
+          "x": 1118,
+          "y": 65
         },
         "conditionMetadata": [
           {
-            "id": "37fb886c-2345-410e-97b3-dc1c1fd4718e",
+            "id": "14856e59-7ada-467f-a868-e40fecb55ce9",
             "operator": {
               "name": "Equals",
               "value": "Equals",
@@ -75,7 +75,7 @@
             "value": "OK"
           },
           {
-            "id": "64a70ac5-2077-4b6d-b4aa-8588c44af0c8",
+            "id": "fd9f1cac-2dbf-49d4-8fd4-e5be2446b004",
             "operator": {
               "name": "Equals",
               "value": "Equals",
@@ -84,7 +84,7 @@
             "value": "Yes/No"
           },
           {
-            "id": "a717bf48-f5f9-443b-9e23-70f220c69da0",
+            "id": "231a0ae7-6909-4317-8e4d-29782eae0ebe",
             "operator": {
               "name": "Equals",
               "value": "Equals",
@@ -93,68 +93,6 @@
             "value": "Multiple Choice"
           }
         ]
-      }
-    },
-    {
-      "id": "c2087f13-6a09-4a81-9051-70a8507595a1",
-      "type": "SetVoice",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "GlobalVoice",
-          "value": "Salli"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 387,
-          "y": 114
-        }
-      }
-    },
-    {
-      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
-      "type": "PlayPrompt",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Text",
-          "value": "message",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "TextToSpeechType",
-          "value": "text"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 342,
-          "y": 379
-        },
-        "useDynamic": true
-      }
-    },
-    {
-      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
-      "type": "Disconnect",
-      "branches": [],
-      "parameters": [],
-      "metadata": {
-        "position": {
-          "x": 1656,
-          "y": 370
-        }
       }
     },
     {
@@ -185,7 +123,7 @@
       "parameters": [
         {
           "name": "Text",
-          "value": "Said \"repeat\" to listen it again. Or, said \"ok\", if you got the message.",
+          "value": "answer \"ok\", if you got the message.",
           "namespace": null
         },
         {
@@ -218,8 +156,8 @@
         },
         {
           "name": "Parameter",
-          "key": "message",
-          "value": "message",
+          "key": "question",
+          "value": "question",
           "namespace": "User Defined"
         },
         {
@@ -231,16 +169,16 @@
       ],
       "metadata": {
         "position": {
-          "x": 948,
-          "y": 86
+          "x": 1439,
+          "y": 77
         },
         "conditionMetadata": [
           {
-            "id": "1905f691-de8a-4d5d-9d0f-f520d7c88d63",
+            "id": "8f28b99a-d259-473a-9670-4ab500be2007",
             "value": "CalloutBot_OkIntent"
           },
           {
-            "id": "835e3950-283b-43e2-a21e-d1427c81a185",
+            "id": "3839be1a-b87e-4ddf-a134-e22f6a837c7f",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -248,7 +186,7 @@
         "dynamicMetadata": {
           "customer_number": true,
           "username": true,
-          "message": true,
+          "question": true,
           "userId": true
         }
       },
@@ -288,7 +226,7 @@
       "parameters": [
         {
           "name": "Text",
-          "value": "Said repeat if you want to listen again. Please say \"Yes\" or \"No\" to end the call.",
+          "value": "say \"Yes\" or \"No\".",
           "namespace": null
         },
         {
@@ -321,8 +259,8 @@
         },
         {
           "name": "Parameter",
-          "key": "message",
-          "value": "message",
+          "key": "question",
+          "value": "question",
           "namespace": "User Defined"
         },
         {
@@ -334,20 +272,20 @@
       ],
       "metadata": {
         "position": {
-          "x": 959,
+          "x": 1433,
           "y": 396
         },
         "conditionMetadata": [
           {
-            "id": "23032ecf-b47b-4f1c-92c3-ba13ef5bd0bb",
+            "id": "e63a98de-cc05-45b3-a727-a6159b176d5c",
             "value": "CalloutBot_YesIntent"
           },
           {
-            "id": "2ada4452-2b05-4d5c-8ce2-760300558278",
+            "id": "95fbb852-2b7a-4bcf-98ca-6df16ef29147",
             "value": "CalloutBot_NoIntent"
           },
           {
-            "id": "5ea57c73-1f49-4072-8ff2-76334d93097e",
+            "id": "8956e513-c593-4fe3-8f80-2f026d1ea5a3",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -355,7 +293,7 @@
         "dynamicMetadata": {
           "customer_number": true,
           "username": true,
-          "message": true,
+          "question": true,
           "userId": true
         }
       },
@@ -413,7 +351,7 @@
       "parameters": [
         {
           "name": "Text",
-          "value": "Said \"Repeat\" to listen the question again. Or tell me A.B.C.D or E to end the call.",
+          "value": "Tell me A.B.C.D or E.",
           "namespace": null
         },
         {
@@ -446,8 +384,8 @@
         },
         {
           "name": "Parameter",
-          "key": "message",
-          "value": "message",
+          "key": "question",
+          "value": "question",
           "namespace": "User Defined"
         },
         {
@@ -459,32 +397,32 @@
       ],
       "metadata": {
         "position": {
-          "x": 971,
-          "y": 751
+          "x": 1438,
+          "y": 746
         },
         "conditionMetadata": [
           {
-            "id": "ff930ed9-254c-4b40-87a8-cf72338ed16c",
+            "id": "9f198788-9c37-4fa8-b5e5-7daf812b14dc",
             "value": "CalloutBot_AIntent"
           },
           {
-            "id": "bf6c215d-da4a-4d96-927b-88d227ddf897",
+            "id": "598562f5-b611-4c52-8344-2b8f83eb2218",
             "value": "CalloutBot_BIntent"
           },
           {
-            "id": "3791d7d8-5f15-4d27-84d3-b9acef5e31cb",
+            "id": "f78db5b8-33b5-42f1-aff1-d5223a5c0f90",
             "value": "CalloutBot_CIntent"
           },
           {
-            "id": "6113bcce-2995-43c3-873b-188df99ccf7f",
+            "id": "8bfad9ab-ec2a-495c-9f1e-ea9f980b7e68",
             "value": "CalloutBot_DIntent"
           },
           {
-            "id": "7c743c1c-9e30-4825-a8f2-35a0c0726f54",
+            "id": "ba3c7c97-b314-4c49-8629-bf21312fc7eb",
             "value": "CalloutBot_EIntent"
           },
           {
-            "id": "bfc52864-42db-450d-a7db-75cbff31c748",
+            "id": "276546a2-69a0-4dc7-90f7-f7255cbb464f",
             "value": "CalloutBot_RepeatIntent"
           }
         ],
@@ -492,11 +430,221 @@
         "dynamicMetadata": {
           "customer_number": true,
           "username": true,
-          "message": true,
+          "question": true,
           "userId": true
         }
       },
       "target": "Lex"
+    },
+    {
+      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "question",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 883,
+          "y": 53
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "f8f785da-a2c1-450b-904c-167daa20008d",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "i",
+          "key": "i",
+          "namespace": "External"
+        },
+        {
+          "name": "Attribute",
+          "value": "question",
+          "key": "question",
+          "namespace": "External"
+        },
+        {
+          "name": "Attribute",
+          "value": "question_type",
+          "key": "question_type",
+          "namespace": "External"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 473,
+          "y": 13
+        }
+      }
+    },
+    {
+      "id": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": {
+        "position": {
+          "x": 791,
+          "y": 1157
+        }
+      }
+    },
+    {
+      "id": "c0653954-3490-45ac-8a07-97b004546f5e",
+      "type": "InvokeExternalResource",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "f8f785da-a2c1-450b-904c-167daa20008d"
+        },
+        {
+          "condition": "Error",
+          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "FunctionArn",
+          "value": "iterator_function_arn",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TimeLimit",
+          "value": "8"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 533,
+          "y": 797
+        },
+        "dynamicMetadata": {},
+        "useDynamic": true
+      },
+      "target": "Lambda"
+    },
+    {
+      "id": "09025934-0180-4b4b-b717-545d182e8546",
+      "type": "InvokeExternalResource",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
+        },
+        {
+          "condition": "Error",
+          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "FunctionArn",
+          "value": "send_task_success_function_arn",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TimeLimit",
+          "value": "8"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 352,
+          "y": 1069
+        },
+        "dynamicMetadata": {},
+        "useDynamic": true
+      },
+      "target": "Lambda"
+    },
+    {
+      "id": "c2087f13-6a09-4a81-9051-70a8507595a1",
+      "type": "SetVoice",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "GlobalVoice",
+          "value": "Salli"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 87,
+          "y": 357
+        }
+      }
+    },
+    {
+      "id": "502c463b-c1e9-4620-97e9-fb36a466ea21",
+      "type": "Loop",
+      "branches": [
+        {
+          "condition": "Looping",
+          "transition": "c0653954-3490-45ac-8a07-97b004546f5e"
+        },
+        {
+          "condition": "Complete",
+          "transition": "09025934-0180-4b4b-b717-545d182e8546"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "LoopCount",
+          "namespace": "User Defined",
+          "value": "number_of_question"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 308,
+          "y": 749
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": {
+        "position": {
+          "x": 2116,
+          "y": 389
+        }
+      }
     },
     {
       "id": "b0447a99-c341-4bb9-b2e1-748775536ea1",
@@ -504,7 +652,7 @@
       "branches": [
         {
           "condition": "Success",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+          "transition": "dfe34cef-4231-4fb2-b01c-2854e7402d1f"
         },
         {
           "condition": "Error",
@@ -530,8 +678,8 @@
       ],
       "metadata": {
         "position": {
-          "x": 1411,
-          "y": 395
+          "x": 1796,
+          "y": 391
         },
         "dynamicMetadata": {
           "response_intent": true
@@ -539,6 +687,34 @@
         "useDynamic": true
       },
       "target": "Lambda"
+    },
+    {
+      "id": "dfe34cef-4231-4fb2-b01c-2854e7402d1f",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "answers",
+          "key": "answers",
+          "namespace": "External"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1829,
+          "y": 815
+        }
+      }
     }
   ],
   "version": "1",
@@ -546,14 +722,14 @@
   "start": "febdb221-bf16-4c0d-a75e-1c88fb1a5edd",
   "metadata": {
     "entryPointPosition": {
-      "x": 20,
-      "y": 20
+      "x": 25,
+      "y": 13
     },
     "snapToGrid": false,
     "name": "Calling out",
     "description": null,
     "type": "contactFlow",
     "status": "published",
-    "hash": "c894bd7207d0c76ebd05425a8407cb6c5fa11ec7560b79fd8457a43741ed892d"
+    "hash": "ca271f2ef47a9172a9b21c3b374e67660b4957b05dbc9d46853fe00c0df95eac"
   }
 }

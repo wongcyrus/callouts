@@ -13,18 +13,18 @@ def lambda_handler(event, context):
 
     taskToken = event["Details"]["ContactData"]["Attributes"]["taskToken"]
     message = event["Details"]["ContactData"]["Attributes"]
-    del message["taskToken"]
-    del message["response_hanlder_function_arn"]
-
     message["response_intent"] = event["Details"]["Parameters"][
         "response_intent"]
     message["error"] = "null"
-    message["answer"] = message["response_intent"].replace("CalloutBot_",
-                                                           "").replace(
-                                                               "Intent", "")
+    answer = message["response_intent"].replace("CalloutBot_",
+                                                "").replace("Intent", "")
+    message["answer"] = answer
 
-    message["status"] = "CallCompleted"
+    # if "answers" not in message or message["answers"] == "[]":
+    #     message["answers"] = json.dumps([answer])
+    # else:
+    previous_answer = json.loads(message["answers"])
+    previous_answer.append(answer)
+    message["answers"] = json.dumps(previous_answer)
 
-    stepfunctions_client.send_task_success(taskToken=taskToken,
-                                           output=json.dumps(message))
-    return event
+    return message
