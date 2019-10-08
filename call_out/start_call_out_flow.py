@@ -26,6 +26,10 @@ def lambda_handler(event, context):
                         call_task['task_id'],
                         'status':
                         "DropCall",
+                        "greeting":
+                        call_task['greeting'],
+                        "ending":
+                        call_task['ending'],
                         "answers":
                         "[]",
                         "error":

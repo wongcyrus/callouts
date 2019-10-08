@@ -29,6 +29,9 @@ def lambda_handler(event, context):
     recevier["questions"] = json.dumps(get_questions(recevier))
     recevier["i"] = "0"
     
+    recevier["greeting"] = get_personalized_message(recevier["greeting"], recevier)
+    recevier["ending"] = get_personalized_message(recevier["ending"], recevier)
+    
     print(recevier)
 
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
@@ -58,7 +61,7 @@ def lambda_handler(event, context):
 
 def get_personalized_message(template, receiver):
     rtemplate = Environment(loader=BaseLoader).from_string(template)
-    return rtemplate.render(**receiver)
+    return "<speak>"+ rtemplate.render(**receiver) + "</speak>"
 
 def get_questions(receiver):
     print(receiver)
