@@ -11,13 +11,15 @@ from sqs_helper import *
 
 client = boto3.client('connect')
 stepfunctions_client = boto3.client("stepfunctions")
+s3 = boto3.client('s3')
+
 
 def lambda_handler(event, context):
 
     contract_flow_arn = os.environ['ContactFlowArn']
     instance_id = contract_flow_arn.split("/")[1]
     contract_flow_id = contract_flow_arn.split("/")[3]
-
+    
     body = json.loads(event["Records"][0]["body"])
     print(body)
     receiver = body['Message']
@@ -28,28 +30,29 @@ def lambda_handler(event, context):
     # You can only pass str into the start_outbound_voice_contact!
     receiver["questions"] = json.dumps(get_questions(receiver))
     receiver["i"] = "0"
-    
-    receiver["greeting"] = get_personalized_message(receiver["greeting"], receiver)
+    receiver["greeting"] = get_personalized_message(receiver["greeting"],
+                                                    receiver)
     receiver["ending"] = get_personalized_message(receiver["ending"], receiver)
-    
-    print(receiver)
 
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
+
     try:
+        print(event)
         response = client.start_outbound_voice_contact(
             DestinationPhoneNumber=receiver['phone_number'],
             ContactFlowId=contract_flow_id,
             InstanceId=instance_id,
             SourcePhoneNumber=os.environ['SourcePhoneNumber'],
             Attributes=receiver)
+        
     except Exception as err:
         print(err)
         receiver['status'] = "NotCallable"
         receiver['error'] = str(err)
-        del message["taskToken"]
-        del message["response_hanlder_function_arn"]
-        del message["iterator_function_arn"]
-        del message["send_task_success_function_arn"]
+        del receiver["taskToken"]
+        del receiver["response_hanlder_function_arn"]
+        del receiver["iterator_function_arn"]
+        del receiver["send_task_success_function_arn"]
         
         print(f"Sending task failure for task ID {task_token}")
         stepfunctions_client.send_task_success(

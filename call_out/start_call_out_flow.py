@@ -1,12 +1,18 @@
 import os
 import datetime
 import json
+import logging
 import boto3
+from botocore.exceptions import ClientError
 
 from sqs_helper import *
 
 stepfunctions = boto3.client('stepfunctions')
 sqs = boto3.client('sqs')
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(levelname)s: %(asctime)s: %(message)s')
 
 
 def lambda_handler(event, context):
@@ -17,7 +23,6 @@ def lambda_handler(event, context):
         return receiver
 
     def body_transform(call_task):
-        call_task = json.loads(call_task)
         return list(
             map(
                 lambda receiver: add_fields(
@@ -48,14 +53,39 @@ def lambda_handler(event, context):
                         datetime.datetime.utcnow().isoformat()
                     }), call_task["receivers"]))
 
-    data = body_transform(event['Records'][0]['body'])
+    call_task = json.loads(event['Records'][0]['body'])
+    data = body_transform(call_task)
     print(data)
+
+    results = list(
+        map(
+            lambda call: put_object(
+                os.environ['ExcelCallTaskBucket'], call_task['task_id'] + "/" +
+                call["id"] + ".json", json.dumps(call)), data))
+
+    keys = list(
+        map(lambda call: call_task['task_id'] + "/" + call["id"] + ".json",
+            data))
 
     name = '{0:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now()) + "-callout"
     response = stepfunctions.start_execution(
         stateMachineArn=os.environ['CalloutStateMachineArn'],
         name=name,
-        input=json.dumps(data))
+        input=json.dumps(keys))
 
     delete_message_batch(os.environ['CallSqsQueueUrl'], event)
     return response
+
+
+def put_object(dest_bucket_name, dest_object_name, object_data):
+    s3 = boto3.client('s3')
+    try:
+        s3.put_object(Bucket=dest_bucket_name,
+                      Key=dest_object_name,
+                      Body=object_data)
+    except ClientError as e:
+        # AllAccessDisabled error == bucket not found
+        # NoSuchKey or InvalidRequest error == (dest bucket/obj == src bucket/obj)
+        logging.error(e)
+        return False
+    return True

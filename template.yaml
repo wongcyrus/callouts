@@ -23,7 +23,18 @@ Resources:
         - python3.7
       LicenseInfo: 'Available under the MIT-0 license.'
       RetentionPolicy: Delete  
-      
+
+  GetCalloutJobFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      Handler: get_call_job.lambda_handler
+      CodeUri: call_out/
+      Policies:
+        - AWSLambdaExecute
+      Environment:
+        Variables:
+          ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
+
   CalloutFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -32,6 +43,7 @@ Resources:
       Layers:
         - !Ref LibLayer           
       Policies:
+        - AWSLambdaExecute
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -41,19 +53,20 @@ Resources:
             - Effect: Allow
               Action:
                - states:SendTaskSuccess 
-              Resource: !Ref CalloutStateMachine      
+              Resource: !Ref CalloutStateMachine                   
       Environment:
         Variables:
           ContactFlowArn: !Ref ContactFlowArn
           SourcePhoneNumber: !Ref SourcePhoneNumber
           AsynCalloutQueueUrl: !Ref AsynCalloutQueue
+          ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
       Events:
         CallSQSEvent:
           Type: SQS
           Properties:
             Queue: !GetAtt AsynCalloutQueue.Arn
             BatchSize: 1
-       
+            
   CalloutSQSQueueFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -61,6 +74,7 @@ Resources:
       CodeUri: call_out/
       ReservedConcurrentExecutions: 1
       Policies:
+        - AWSLambdaExecute      
         - StepFunctionsExecutionPolicy:
             StateMachineName:
               !GetAtt CalloutStateMachine.Name
@@ -71,6 +85,7 @@ Resources:
           ResponseHanlderFunctionArn: !GetAtt ResponseHanlderFunction.Arn
           IteratorFunctionArn: !GetAtt IteratorFunction.Arn
           SendTaskSuccessFunctionArn: !GetAtt SendTaskSuccessFunction.Arn
+          ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
       Events:
         CallSQSEvent:
           Type: SQS
@@ -90,6 +105,7 @@ Resources:
       Handler: send_task_success.lambda_handler
       CodeUri: call_out/
       Policies:
+        - AWSLambdaExecute      
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -127,6 +143,11 @@ Resources:
           Properties:
             Bucket: !Ref ExcelCallTaskBucket
             Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: .xlsx
   
   ExcelCallTaskBucket:
     Type: AWS::S3::Bucket     
@@ -193,6 +214,11 @@ Resources:
                 Action:
                   - dynamodb:PutItem
                 Resource: !GetAtt CallResultDynamoDBTable.Arn
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !GetAtt GetCalloutJobFunction.Arn
+                
                 
   CalloutStateMachine:
     Type: AWS::StepFunctions::StateMachine
@@ -214,8 +240,13 @@ Resources:
                   "InputPath": "$",
                   "ItemsPath": "$",
                   "Iterator": {
-                    "StartAt": "Callout with AWS Connect",
+                    "StartAt": "Get Call out job",
                     "States": {
+                      "Get Call out job": {
+                        "Type": "Task",
+                        "Resource": "${GetCalloutJobFunction}",
+                        "Next": "Callout with AWS Connect"
+                      },
                       "Callout with AWS Connect": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
@@ -256,6 +287,7 @@ Resources:
                           }
                         },
                         "ResultPath": "$.Result",
+                        "OutputPath": "$.task_id",
                         "End": true
                       }
                     }
@@ -269,6 +301,7 @@ Resources:
           - 
             AsynCalloutQueue: !Ref AsynCalloutQueue
             CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
+            GetCalloutJobFunction: !GetAtt GetCalloutJobFunction.Arn
       RoleArn: !GetAtt CalloutStatesExecutionRole.Arn
       
       
