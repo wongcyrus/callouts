@@ -15,6 +15,15 @@ Globals:
     Tracing: Active
     Runtime: python3.7  
 Resources:
+  LibLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: lib
+      CompatibleRuntimes:
+        - python3.7
+      LicenseInfo: 'Available under the MIT-0 license.'
+      RetentionPolicy: Delete  
+      
   CalloutFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -44,16 +53,7 @@ Resources:
           Properties:
             Queue: !GetAtt AsynCalloutQueue.Arn
             BatchSize: 1
-            
-  LibLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: lib
-      CompatibleRuntimes:
-        - python3.7
-      LicenseInfo: 'Available under the MIT-0 license.'
-      RetentionPolicy: Delete  
-      
+       
   CalloutSQSQueueFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -102,7 +102,35 @@ Resources:
     Properties:
       Handler: iterator.lambda_handler
       CodeUri: call_out/
-              
+
+  CreateExcelCallTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: excel_call_task.lambda_handler
+      CodeUri: call_out/
+      Layers:
+        - !Ref LibLayer      
+      Policies: 
+        - AWSLambdaExecute
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+               - sqs:SendMessage
+              Resource: !GetAtt CallSqsQueue.Arn
+      Environment:
+        Variables:
+          CallSqsQueueUrl: !Ref CallSqsQueue
+      Events:
+        ExcelCallTaskEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref ExcelCallTaskBucket
+            Events: s3:ObjectCreated:*
+  
+  ExcelCallTaskBucket:
+    Type: AWS::S3::Bucket     
+    
   CallSqsQueue:
     Type: AWS::SQS::Queue
     Properties: 
@@ -248,4 +276,7 @@ Outputs:
   CallSqsQueue:
     Description: "Call Out Queue ARN"
     Value: !GetAtt CallSqsQueue.Arn
+  ExcelCallTaskBucket:
+    Description: "Excel Call Task Bucket"
+    Value: !Ref ExcelCallTaskBucket
 

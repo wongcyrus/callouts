@@ -22,6 +22,12 @@ sudo ./get_layer_packages.sh
 ./deployment.sh
 
 
+## How to use it without a line of code.
+
+1. Modify contract_flow/call_job.xlsx and it is very easy to understand!
+2. Upload the Excel file to ExcelCallTaskBucket.
+
+
 ## Sample Code to make calls
 
 ```python

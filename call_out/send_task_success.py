@@ -2,7 +2,6 @@ import os
 import datetime
 import json
 import sys
-sys.path.append("/opt/")
 import boto3
 
 stepfunctions_client = boto3.client("stepfunctions")
