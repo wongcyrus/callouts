@@ -41,7 +41,7 @@ Resources:
       Handler: send_call.lambda_handler
       CodeUri: call_out/
       Layers:
-        - !Ref LibLayer           
+        - !Ref LibLayer
       Policies:
         - AWSLambdaExecute
         - Version: '2012-10-17' # Policy Document
@@ -112,7 +112,27 @@ Resources:
               Action:
                - states:SendTaskSuccess
               Resource: !Ref CalloutStateMachine
-              
+          
+  GetCallResultFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      Handler: get_call_result.lambda_handler
+      CodeUri: call_out/
+      Layers:
+        - !Ref LibLayer      
+      Policies:
+        - AWSLambdaExecute      
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource: !GetAtt CallResultDynamoDBTable.Arn
+      Environment:
+        Variables:
+          CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
+          ExcelCallResultBucket: !Ref ExcelCallResultBucket
+          
   IteratorFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -125,7 +145,7 @@ Resources:
       Handler: excel_call_task.lambda_handler
       CodeUri: call_out/
       Layers:
-        - !Ref LibLayer      
+        - !Ref LibLayer
       Policies: 
         - AWSLambdaExecute
         - Version: '2012-10-17' # Policy Document
@@ -151,6 +171,9 @@ Resources:
   
   ExcelCallTaskBucket:
     Type: AWS::S3::Bucket     
+
+  ExcelCallResultBucket:
+    Type: AWS::S3::Bucket 
     
   CallSqsQueue:
     Type: AWS::SQS::Queue
@@ -217,7 +240,9 @@ Resources:
               - Effect: Allow
                 Action:
                   - lambda:InvokeFunction
-                Resource: !GetAtt GetCalloutJobFunction.Arn
+                Resource: 
+                  - !GetAtt GetCalloutJobFunction.Arn
+                  - !GetAtt GetCallResultFunction.Arn
                 
                 
   CalloutStateMachine:
@@ -236,9 +261,10 @@ Resources:
                 },
                 "Process Call Messages": {
                   "Type": "Map",
-                  "Next": "Finish",
+                  "Next": "Get Call Result",
                   "InputPath": "$",
                   "ItemsPath": "$",
+                  "OutputPath": "$.[0]",
                   "Iterator": {
                     "StartAt": "Get Call out job",
                     "States": {
@@ -293,6 +319,11 @@ Resources:
                     }
                   }
                 },
+                "Get Call Result": {
+                  "Type": "Task",
+                  "Resource": "${GetCallResultFunction}",
+                  "Next": "Finish"
+                },
                 "Finish": {
                   "Type": "Succeed"
                 }
@@ -302,6 +333,7 @@ Resources:
             AsynCalloutQueue: !Ref AsynCalloutQueue
             CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
             GetCalloutJobFunction: !GetAtt GetCalloutJobFunction.Arn
+            GetCallResultFunction: !GetAtt GetCallResultFunction.Arn
       RoleArn: !GetAtt CalloutStatesExecutionRole.Arn
       
       

@@ -84,8 +84,6 @@ def put_object(dest_bucket_name, dest_object_name, object_data):
                       Key=dest_object_name,
                       Body=object_data)
     except ClientError as e:
-        # AllAccessDisabled error == bucket not found
-        # NoSuchKey or InvalidRequest error == (dest bucket/obj == src bucket/obj)
         logging.error(e)
         return False
     return True
