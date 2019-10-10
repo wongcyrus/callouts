@@ -67,7 +67,7 @@ Resources:
             Queue: !GetAtt AsynCalloutQueue.Arn
             BatchSize: 1
             
-  CalloutSQSQueueFunction:
+  StartCallOutFlowFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: start_call_out_flow.lambda_handler
@@ -131,7 +131,7 @@ Resources:
       Environment:
         Variables:
           CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
-          ExcelCallResultBucket: !Ref ExcelCallResultBucket
+          CallReportBucket: !Ref CallReportBucket
           
   IteratorFunction:
     Type: AWS::Serverless::Function 
@@ -142,7 +142,7 @@ Resources:
   CreateExcelCallTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: excel_call_task.lambda_handler
+      Handler: create_excel_call_task.lambda_handler
       CodeUri: call_out/
       Layers:
         - !Ref LibLayer
@@ -172,7 +172,7 @@ Resources:
   ExcelCallTaskBucket:
     Type: AWS::S3::Bucket     
 
-  ExcelCallResultBucket:
+  CallReportBucket:
     Type: AWS::S3::Bucket 
     
   CallSqsQueue:
@@ -339,9 +339,11 @@ Resources:
       
 Outputs:
   CallSqsQueue:
-    Description: "Call Out Queue ARN"
+    Description: Call Out Queue ARN
     Value: !GetAtt CallSqsQueue.Arn
   ExcelCallTaskBucket:
-    Description: "Excel Call Task Bucket"
+    Description: Excel Call Task Bucket
     Value: !Ref ExcelCallTaskBucket
-
+  CallReportBucket:
+    Description: Call Report Bucket
+    Value: !Ref CallReportBucket
