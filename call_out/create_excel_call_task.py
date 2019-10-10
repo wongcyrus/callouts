@@ -26,11 +26,10 @@ def lambda_handler(event, context):
         configures = pd.read_excel(
             excel_file,
             sheet_name="configures",
-        ).to_dict()
+        ).fillna('').to_dict()
 
-        questions = pd.read_excel(excel_file,
-                                  sheet_name="questions").to_dict('records')
-        questions = questions.dropna()
+        questions = pd.read_excel(
+            excel_file, sheet_name="questions").dropna().to_dict('records')
 
         receivers = pd.read_excel(excel_file, sheet_name="receivers")
         receivers = receivers.dropna()

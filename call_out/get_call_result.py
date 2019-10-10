@@ -18,14 +18,7 @@ def lambda_handler(event, context):
     print(event)
 
     table = dynamodb.Table(os.environ['CallResultDynamoDBTable'])
-    response = table.query(
-        ProjectionExpression=
-        "task_id, receiver_id, answers, call_at, #st, #err, username",
-        ExpressionAttributeNames={
-            "#st": "status",
-            "#err": "error"
-        },
-        KeyConditionExpression=Key('task_id').eq(task_id))
+    response = table.query(KeyConditionExpression=Key('task_id').eq(task_id))
 
     def convert_answer(call_record):
         call_record["answers"] = json.loads(call_record["answers"])
