@@ -7,6 +7,7 @@ import uuid
 import pprint
 from urllib.parse import unquote_plus
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 
 s3 = boto3.client('s3')
 sqs = boto3.client('sqs')
@@ -29,16 +30,22 @@ def lambda_handler(event, context):
 
         questions = pd.read_excel(excel_file,
                                   sheet_name="questions").to_dict('records')
+        questions = questions.dropna()
 
         receivers = pd.read_excel(excel_file, sheet_name="receivers")
+        receivers = receivers.dropna()
         receivers.rename(columns={'id': 'receiver_id'}, inplace=True)
-        receivers.receiver_id = receivers.receiver_id.apply(str)
+        if is_numeric_dtype(receivers['receiver_id']):
+            receivers.receiver_id = receivers.receiver_id.apply(
+                lambda x: str(int(x)))
+
         receivers["id"] = list(
             map(lambda x: task_id + "_" + str(x), receivers["receiver_id"]))
 
         receivers["phone_number"] = list(
-            map(lambda x: "+" + str(configures["phone_prefix"][0]) + str(x),
-                receivers["phone_number"]))
+            map(
+                lambda x: "+" + str(configures["phone_prefix"][0]) + str(int(
+                    x)), receivers["phone_number"]))
 
         receivers = receivers.to_dict('records')
 

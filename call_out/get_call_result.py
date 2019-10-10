@@ -38,7 +38,7 @@ def lambda_handler(event, context):
     filename = "/tmp/{}.xlsx".format(task_id)
     df.to_excel(filename)
 
-    s3.upload_file(filename, os.environ['ExcelCallResultBucket'],
+    s3.upload_file(filename, os.environ['CallReportBucket'],
                    task_id + "_result.xlsx")
     print(df)
 
