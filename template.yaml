@@ -276,7 +276,7 @@ Resources:
                       "Callout with AWS Connect": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
-                        "TimeoutSeconds": 180,
+                        "TimeoutSeconds": 300,
                         "Parameters": {
                           "QueueUrl": "${AsynCalloutQueue}",
                           "MessageBody": {

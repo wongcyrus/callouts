@@ -2,6 +2,8 @@ import os
 import boto3
 import botocore
 import json
+import time
+import random
 
 import sys
 sys.path.append("/opt/")
@@ -37,6 +39,10 @@ def lambda_handler(event, context):
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
 
     try:
+        
+        delay = random.randrange(0, 10)
+        print("Sleep: " + str(delay))
+        time.sleep(delay)
         print(event)
         response = client.start_outbound_voice_contact(
             DestinationPhoneNumber=receiver['phone_number'],
@@ -44,6 +50,7 @@ def lambda_handler(event, context):
             InstanceId=instance_id,
             SourcePhoneNumber=os.environ['SourcePhoneNumber'],
             Attributes=receiver)
+        print(response)    
         
     except Exception as err:
         print(err)

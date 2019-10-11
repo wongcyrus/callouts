@@ -3,8 +3,6 @@ import os
 import sys
 import json
 sys.path.append("/opt/")
-import uuid
-import pprint
 from urllib.parse import unquote_plus
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
@@ -59,13 +57,12 @@ def lambda_handler(event, context):
             "questions": questions,
             "receivers": receivers
         }
-        pp = pprint.PrettyPrinter(compact=True)
-        pp.pprint(call_task)
+        print(call_task)
 
         print("Json Text in KB: " +
               str(sys.getsizeof(json.dumps(call_task)) / 1024))
 
         response = sqs.send_message(QueueUrl=os.environ['CallSqsQueueUrl'],
                                     MessageBody=json.dumps(call_task))
-        pp.pprint(response)
+        print(response)
         return response
