@@ -23,514 +23,40 @@
       }
     },
     {
-      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
-      "type": "Disconnect",
-      "branches": [],
-      "parameters": [],
-      "metadata": {
-        "position": {
-          "x": 2116,
-          "y": 389
-        }
-      }
-    },
-    {
-      "id": "b0447a99-c341-4bb9-b2e1-748775536ea1",
-      "type": "InvokeExternalResource",
+      "id": "c2087f13-6a09-4a81-9051-70a8507595a1",
+      "type": "SetVoice",
       "branches": [
         {
           "condition": "Success",
-          "transition": "dfe34cef-4231-4fb2-b01c-2854e7402d1f"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+          "transition": "1075e071-482b-4c70-a147-622e57a1a0e3"
         }
       ],
       "parameters": [
         {
-          "name": "FunctionArn",
-          "value": "response_hanlder_function_arn",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "TimeLimit",
-          "value": "8"
-        },
-        {
-          "name": "Parameter",
-          "key": "response_intent",
-          "value": "Lex.IntentName",
-          "namespace": "System"
+          "name": "GlobalVoice",
+          "value": "Salli"
         }
       ],
       "metadata": {
         "position": {
-          "x": 1796,
-          "y": 391
-        },
-        "dynamicMetadata": {
-          "response_intent": true
-        },
-        "useDynamic": true
-      },
-      "target": "Lambda"
-    },
-    {
-      "id": "dfe34cef-4231-4fb2-b01c-2854e7402d1f",
-      "type": "SetAttributes",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Attribute",
-          "value": "answers",
-          "key": "answers",
-          "namespace": "External"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 1829,
-          "y": 815
+          "x": 87,
+          "y": 357
         }
       }
     },
     {
-      "id": "d1c063ab-ed4e-4dde-b881-328025ac7720",
-      "type": "CheckAttribute",
-      "branches": [
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "OK",
-          "transition": "169c250e-e537-45df-b14f-f458c70bd564"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "Yes/No",
-          "transition": "beddd34a-78e7-4feb-86fb-98e92414af0a"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "Multiple Choice",
-          "transition": "cef2915a-1888-4223-92b2-23933f149ae7"
-        },
-        {
-          "condition": "NoMatch",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Attribute",
-          "value": "question_type"
-        },
-        {
-          "name": "Namespace",
-          "value": "User Defined"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 1118,
-          "y": 65
-        },
-        "conditionMetadata": [
-          {
-            "id": "14856e59-7ada-467f-a868-e40fecb55ce9",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "OK"
-          },
-          {
-            "id": "fd9f1cac-2dbf-49d4-8fd4-e5be2446b004",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Yes/No"
-          },
-          {
-            "id": "231a0ae7-6909-4317-8e4d-29782eae0ebe",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Multiple Choice"
-          }
-        ]
-      }
-    },
-    {
-      "id": "169c250e-e537-45df-b14f-f458c70bd564",
-      "type": "GetUserInput",
-      "branches": [
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_OkIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_RepeatIntent",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "NoMatch",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Text",
-          "value": "answer \"ok\", if you got the message.",
-          "namespace": null
-        },
-        {
-          "name": "TextToSpeechType",
-          "value": "text"
-        },
-        {
-          "name": "BotName",
-          "value": "CalloutBot_ExcelLexBot"
-        },
-        {
-          "name": "BotAlias",
-          "value": "$LATEST"
-        },
-        {
-          "name": "BotRegion",
-          "value": "us-east-1"
-        },
-        {
-          "name": "Parameter",
-          "key": "customer_number",
-          "value": "Customer Number",
-          "namespace": "System"
-        },
-        {
-          "name": "Parameter",
-          "key": "username",
-          "value": "username",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "Parameter",
-          "key": "question",
-          "value": "question",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "Parameter",
-          "key": "userId",
-          "value": "id",
-          "namespace": "User Defined"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 1439,
-          "y": 77
-        },
-        "conditionMetadata": [
-          {
-            "id": "8f28b99a-d259-473a-9670-4ab500be2007",
-            "value": "CalloutBot_OkIntent"
-          },
-          {
-            "id": "3839be1a-b87e-4ddf-a134-e22f6a837c7f",
-            "value": "CalloutBot_RepeatIntent"
-          }
-        ],
-        "useDynamic": false,
-        "dynamicMetadata": {
-          "customer_number": true,
-          "username": true,
-          "question": true,
-          "userId": true
-        }
-      },
-      "target": "Lex"
-    },
-    {
-      "id": "beddd34a-78e7-4feb-86fb-98e92414af0a",
-      "type": "GetUserInput",
-      "branches": [
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_YesIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_NoIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_RepeatIntent",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "NoMatch",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Text",
-          "value": "say \"Yes\" or \"No\".",
-          "namespace": null
-        },
-        {
-          "name": "TextToSpeechType",
-          "value": "text"
-        },
-        {
-          "name": "BotName",
-          "value": "CalloutBot_ExcelLexBot"
-        },
-        {
-          "name": "BotAlias",
-          "value": "$LATEST"
-        },
-        {
-          "name": "BotRegion",
-          "value": "us-east-1"
-        },
-        {
-          "name": "Parameter",
-          "key": "customer_number",
-          "value": "Customer Number",
-          "namespace": "System"
-        },
-        {
-          "name": "Parameter",
-          "key": "username",
-          "value": "username",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "Parameter",
-          "key": "question",
-          "value": "question",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "Parameter",
-          "key": "userId",
-          "value": "id",
-          "namespace": "User Defined"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 1433,
-          "y": 396
-        },
-        "conditionMetadata": [
-          {
-            "id": "e63a98de-cc05-45b3-a727-a6159b176d5c",
-            "value": "CalloutBot_YesIntent"
-          },
-          {
-            "id": "95fbb852-2b7a-4bcf-98ca-6df16ef29147",
-            "value": "CalloutBot_NoIntent"
-          },
-          {
-            "id": "8956e513-c593-4fe3-8f80-2f026d1ea5a3",
-            "value": "CalloutBot_RepeatIntent"
-          }
-        ],
-        "useDynamic": false,
-        "dynamicMetadata": {
-          "customer_number": true,
-          "username": true,
-          "question": true,
-          "userId": true
-        }
-      },
-      "target": "Lex"
-    },
-    {
-      "id": "cef2915a-1888-4223-92b2-23933f149ae7",
-      "type": "GetUserInput",
-      "branches": [
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_AIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_BIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_CIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_DIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_EIntent",
-          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
-        },
-        {
-          "condition": "Evaluate",
-          "conditionType": "Equals",
-          "conditionValue": "CalloutBot_RepeatIntent",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "NoMatch",
-          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Text",
-          "value": "Tell me A.B.C.D or E.",
-          "namespace": null
-        },
-        {
-          "name": "TextToSpeechType",
-          "value": "text"
-        },
-        {
-          "name": "BotName",
-          "value": "CalloutBot_ExcelLexBot"
-        },
-        {
-          "name": "BotAlias",
-          "value": "$LATEST"
-        },
-        {
-          "name": "BotRegion",
-          "value": "us-east-1"
-        },
-        {
-          "name": "Parameter",
-          "key": "customer_number",
-          "value": "Customer Number",
-          "namespace": "System"
-        },
-        {
-          "name": "Parameter",
-          "key": "username",
-          "value": "username",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "Parameter",
-          "key": "question",
-          "value": "question",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "Parameter",
-          "key": "userId",
-          "value": "id",
-          "namespace": "User Defined"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 1438,
-          "y": 746
-        },
-        "conditionMetadata": [
-          {
-            "id": "9f198788-9c37-4fa8-b5e5-7daf812b14dc",
-            "value": "CalloutBot_AIntent"
-          },
-          {
-            "id": "598562f5-b611-4c52-8344-2b8f83eb2218",
-            "value": "CalloutBot_BIntent"
-          },
-          {
-            "id": "f78db5b8-33b5-42f1-aff1-d5223a5c0f90",
-            "value": "CalloutBot_CIntent"
-          },
-          {
-            "id": "8bfad9ab-ec2a-495c-9f1e-ea9f980b7e68",
-            "value": "CalloutBot_DIntent"
-          },
-          {
-            "id": "ba3c7c97-b314-4c49-8629-bf21312fc7eb",
-            "value": "CalloutBot_EIntent"
-          },
-          {
-            "id": "276546a2-69a0-4dc7-90f7-f7255cbb464f",
-            "value": "CalloutBot_RepeatIntent"
-          }
-        ],
-        "useDynamic": false,
-        "dynamicMetadata": {
-          "customer_number": true,
-          "username": true,
-          "question": true,
-          "userId": true
-        }
-      },
-      "target": "Lex"
-    },
-    {
-      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
+      "id": "1075e071-482b-4c70-a147-622e57a1a0e3",
       "type": "PlayPrompt",
       "branches": [
         {
           "condition": "Success",
-          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
+          "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
         }
       ],
       "parameters": [
         {
           "name": "Text",
-          "value": "question",
+          "value": "greeting",
           "namespace": "User Defined"
         },
         {
@@ -540,19 +66,47 @@
       ],
       "metadata": {
         "position": {
-          "x": 882,
-          "y": 52
+          "x": 50,
+          "y": 581
         },
         "useDynamic": true
       }
     },
     {
-      "id": "c0653954-3490-45ac-8a07-97b004546f5e",
+      "id": "3e43b4a8-d4b2-43e7-bfb6-f546ca93ceaa",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "ending",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "ssml"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 577,
+          "y": 1287
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "09025934-0180-4b4b-b717-545d182e8546",
       "type": "InvokeExternalResource",
       "branches": [
         {
           "condition": "Success",
-          "transition": "f8f785da-a2c1-450b-904c-167daa20008d"
+          "transition": "3e43b4a8-d4b2-43e7-bfb6-f546ca93ceaa"
         },
         {
           "condition": "Error",
@@ -562,20 +116,28 @@
       "parameters": [
         {
           "name": "FunctionArn",
-          "value": "iterator_function_arn",
+          "value": "send_task_success_function_arn",
           "namespace": "User Defined"
         },
         {
           "name": "TimeLimit",
           "value": "8"
+        },
+        {
+          "name": "Parameter",
+          "key": "ContactId",
+          "value": "ContactId",
+          "namespace": "System"
         }
       ],
       "metadata": {
         "position": {
-          "x": 533,
-          "y": 797
+          "x": 352,
+          "y": 1069
         },
-        "dynamicMetadata": {},
+        "dynamicMetadata": {
+          "ContactId": true
+        },
         "useDynamic": true
       },
       "target": "Lambda"
@@ -633,68 +195,6 @@
       }
     },
     {
-      "id": "09025934-0180-4b4b-b717-545d182e8546",
-      "type": "InvokeExternalResource",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "3e43b4a8-d4b2-43e7-bfb6-f546ca93ceaa"
-        },
-        {
-          "condition": "Error",
-          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "FunctionArn",
-          "value": "send_task_success_function_arn",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "TimeLimit",
-          "value": "8"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 352,
-          "y": 1069
-        },
-        "dynamicMetadata": {},
-        "useDynamic": true
-      },
-      "target": "Lambda"
-    },
-    {
-      "id": "3e43b4a8-d4b2-43e7-bfb6-f546ca93ceaa",
-      "type": "PlayPrompt",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Text",
-          "value": "ending",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "TextToSpeechType",
-          "value": "ssml"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 577,
-          "y": 1287
-        },
-        "useDynamic": true
-      }
-    },
-    {
       "id": "502c463b-c1e9-4620-97e9-fb36a466ea21",
       "type": "Loop",
       "branches": [
@@ -723,40 +223,361 @@
       }
     },
     {
-      "id": "c2087f13-6a09-4a81-9051-70a8507595a1",
-      "type": "SetVoice",
+      "id": "c0653954-3490-45ac-8a07-97b004546f5e",
+      "type": "InvokeExternalResource",
       "branches": [
         {
           "condition": "Success",
-          "transition": "1075e071-482b-4c70-a147-622e57a1a0e3"
+          "transition": "f8f785da-a2c1-450b-904c-167daa20008d"
+        },
+        {
+          "condition": "Error",
+          "transition": "eb8cf8b4-96c4-4a2a-bbd1-4010d2b6738e"
         }
       ],
       "parameters": [
         {
-          "name": "GlobalVoice",
-          "value": "Salli"
+          "name": "FunctionArn",
+          "value": "iterator_function_arn",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TimeLimit",
+          "value": "8"
+        },
+        {
+          "name": "Parameter",
+          "key": "ContactId",
+          "value": "ContactId",
+          "namespace": "System"
         }
       ],
       "metadata": {
         "position": {
-          "x": 87,
-          "y": 357
-        }
-      }
+          "x": 533,
+          "y": 797
+        },
+        "dynamicMetadata": {
+          "ContactId": true
+        },
+        "useDynamic": true
+      },
+      "target": "Lambda"
     },
     {
-      "id": "1075e071-482b-4c70-a147-622e57a1a0e3",
-      "type": "PlayPrompt",
+      "id": "dfe34cef-4231-4fb2-b01c-2854e7402d1f",
+      "type": "SetAttributes",
       "branches": [
         {
           "condition": "Success",
           "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "answers",
+          "key": "answers",
+          "namespace": "External"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1829,
+          "y": 815
+        }
+      }
+    },
+    {
+      "id": "169c250e-e537-45df-b14f-f458c70bd564",
+      "type": "GetUserInput",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_OkIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AMAZONRepeatIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AMAZONFallbackIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
         }
       ],
       "parameters": [
         {
           "name": "Text",
-          "value": "greeting",
+          "value": "answer \"ok\", if you got the message.",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        },
+        {
+          "name": "BotName",
+          "value": "CalloutBot_ExcelLexBot"
+        },
+        {
+          "name": "BotAlias",
+          "value": "$LATEST"
+        },
+        {
+          "name": "BotRegion",
+          "value": "us-east-1"
+        },
+        {
+          "name": "Parameter",
+          "key": "customer_number",
+          "value": "Customer Number",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "username",
+          "value": "username",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "question",
+          "value": "question",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "userId",
+          "value": "id",
+          "namespace": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1439,
+          "y": 77
+        },
+        "conditionMetadata": [
+          {
+            "id": "6b2057ad-ee04-47f4-97ed-a0dac857861b",
+            "value": "CalloutBot_OkIntent"
+          },
+          {
+            "id": "cef4c36b-951e-46d0-984b-4e00b5617ba4",
+            "value": "CalloutBot_AMAZONRepeatIntent"
+          },
+          {
+            "id": "4baf153c-8977-47b5-8928-058fd6faae2a",
+            "value": "CalloutBot_AMAZONFallbackIntent"
+          }
+        ],
+        "useDynamic": false,
+        "dynamicMetadata": {
+          "customer_number": true,
+          "username": true,
+          "question": true,
+          "userId": true
+        }
+      },
+      "target": "Lex"
+    },
+    {
+      "id": "beddd34a-78e7-4feb-86fb-98e92414af0a",
+      "type": "GetUserInput",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_YesIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_NoIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AMAZONRepeatIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AMAZONFallbackIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "say \"Yes\" or \"No\".",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        },
+        {
+          "name": "BotName",
+          "value": "CalloutBot_ExcelLexBot"
+        },
+        {
+          "name": "BotAlias",
+          "value": "$LATEST"
+        },
+        {
+          "name": "BotRegion",
+          "value": "us-east-1"
+        },
+        {
+          "name": "Parameter",
+          "key": "customer_number",
+          "value": "Customer Number",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "username",
+          "value": "username",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "question",
+          "value": "question",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "userId",
+          "value": "id",
+          "namespace": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1433,
+          "y": 396
+        },
+        "conditionMetadata": [
+          {
+            "id": "ee9f613a-ca11-4a0a-9da8-b748bde3b5c9",
+            "value": "CalloutBot_YesIntent"
+          },
+          {
+            "id": "1eeac942-9fa6-4629-ae1c-c72227c31e71",
+            "value": "CalloutBot_NoIntent"
+          },
+          {
+            "id": "eb354180-2dbe-4235-b9c1-22667f0feed5",
+            "value": "CalloutBot_AMAZONRepeatIntent"
+          },
+          {
+            "id": "28f5d117-6b82-4f8d-96f4-78c868743154",
+            "value": "CalloutBot_AMAZONFallbackIntent"
+          }
+        ],
+        "useDynamic": false,
+        "dynamicMetadata": {
+          "customer_number": true,
+          "username": true,
+          "question": true,
+          "userId": true
+        }
+      },
+      "target": "Lex"
+    },
+    {
+      "id": "b0447a99-c341-4bb9-b2e1-748775536ea1",
+      "type": "InvokeExternalResource",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "dfe34cef-4231-4fb2-b01c-2854e7402d1f"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "FunctionArn",
+          "value": "response_hanlder_function_arn",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TimeLimit",
+          "value": "8"
+        },
+        {
+          "name": "Parameter",
+          "key": "response_intent",
+          "value": "Lex.IntentName",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "ContactId",
+          "value": "ContactId",
+          "namespace": "System"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1796,
+          "y": 391
+        },
+        "dynamicMetadata": {
+          "response_intent": true,
+          "ContactId": true
+        },
+        "useDynamic": true
+      },
+      "target": "Lambda"
+    },
+    {
+      "id": "2f8e994e-1785-4fe4-83b5-0e94650638cc",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "d1c063ab-ed4e-4dde-b881-328025ac7720"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "question",
           "namespace": "User Defined"
         },
         {
@@ -766,11 +587,243 @@
       ],
       "metadata": {
         "position": {
-          "x": 50,
-          "y": 581
+          "x": 882,
+          "y": 52
         },
         "useDynamic": true
       }
+    },
+    {
+      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": {
+        "position": {
+          "x": 2116,
+          "y": 389
+        }
+      }
+    },
+    {
+      "id": "d1c063ab-ed4e-4dde-b881-328025ac7720",
+      "type": "CheckAttribute",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "OK",
+          "transition": "169c250e-e537-45df-b14f-f458c70bd564"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "Yes/No",
+          "transition": "beddd34a-78e7-4feb-86fb-98e92414af0a"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "Multiple Choice",
+          "transition": "cef2915a-1888-4223-92b2-23933f149ae7"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "question_type"
+        },
+        {
+          "name": "Namespace",
+          "value": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1118,
+          "y": 65
+        },
+        "conditionMetadata": [
+          {
+            "id": "3b9711e5-a00e-4d55-b6f8-f98521c8513e",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "OK"
+          },
+          {
+            "id": "5df1bb63-96a1-48d2-a22e-298c62856b6e",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Yes/No"
+          },
+          {
+            "id": "28d6cffc-8455-473e-bfba-e37601169218",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Multiple Choice"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cef2915a-1888-4223-92b2-23933f149ae7",
+      "type": "GetUserInput",
+      "branches": [
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_BIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_CIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_DIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_EIntent",
+          "transition": "b0447a99-c341-4bb9-b2e1-748775536ea1"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AMAZONRepeatIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "NoMatch",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        },
+        {
+          "condition": "Evaluate",
+          "conditionType": "Equals",
+          "conditionValue": "CalloutBot_AMAZONFallbackIntent",
+          "transition": "2f8e994e-1785-4fe4-83b5-0e94650638cc"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "Tell me A.B.C.D or E.",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        },
+        {
+          "name": "BotName",
+          "value": "CalloutBot_ExcelLexBot"
+        },
+        {
+          "name": "BotAlias",
+          "value": "$LATEST"
+        },
+        {
+          "name": "BotRegion",
+          "value": "us-east-1"
+        },
+        {
+          "name": "Parameter",
+          "key": "customer_number",
+          "value": "Customer Number",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "username",
+          "value": "username",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "question",
+          "value": "question",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "Parameter",
+          "key": "userId",
+          "value": "id",
+          "namespace": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1438,
+          "y": 746
+        },
+        "conditionMetadata": [
+          {
+            "id": "a8a5060e-9b6b-4a03-be0c-2fca68e737bd",
+            "value": "CalloutBot_AIntent"
+          },
+          {
+            "id": "91f8d351-3464-40ba-855f-1974d4c7512c",
+            "value": "CalloutBot_BIntent"
+          },
+          {
+            "id": "eb307055-a824-4a46-8225-ed7ea9454db9",
+            "value": "CalloutBot_CIntent"
+          },
+          {
+            "id": "9d13555b-3f1e-4137-9817-47cab69906e6",
+            "value": "CalloutBot_DIntent"
+          },
+          {
+            "id": "d1a6a8a6-c84f-47c4-9fff-95956b05db5f",
+            "value": "CalloutBot_EIntent"
+          },
+          {
+            "id": "1a8047ec-ade4-4360-898f-479c028c2f3b",
+            "value": "CalloutBot_AMAZONRepeatIntent"
+          },
+          {
+            "id": "2ad549c7-243a-4fd5-a8fe-3a5471dac2f1",
+            "value": "CalloutBot_AMAZONFallbackIntent"
+          }
+        ],
+        "useDynamic": false,
+        "dynamicMetadata": {
+          "customer_number": true,
+          "username": true,
+          "question": true,
+          "userId": true
+        }
+      },
+      "target": "Lex"
     }
   ],
   "version": "1",
@@ -786,6 +839,6 @@
     "description": null,
     "type": "contactFlow",
     "status": "published",
-    "hash": "e2e499b76ab4a27d1800dbb571a8e60a10559d765109b2e66419e8ef6f4bc861"
+    "hash": "9cc6f61474a24dbef224553f9ffb0bbf10c04d5525f0548f56b0f0dc4b5f8cf4"
   }
 }
