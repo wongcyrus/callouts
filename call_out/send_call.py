@@ -3,7 +3,6 @@ import boto3
 import botocore
 import json
 import time
-import random
 
 import sys
 sys.path.append("/opt/")
@@ -36,13 +35,13 @@ def lambda_handler(event, context):
                                                     receiver)
     receiver["ending"] = get_personalized_message(receiver["ending"], receiver)
 
+    delay = receiver["delay"];
+    del receiver["delay"]
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
 
     try:
-        
-        delay = random.randrange(0, 10)
         print("Sleep: " + str(delay))
-        time.sleep(delay)
+        time.sleep(delay )
         print(event)
         response = client.start_outbound_voice_contact(
             DestinationPhoneNumber=receiver['phone_number'],

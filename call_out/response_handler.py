@@ -20,9 +20,6 @@ def lambda_handler(event, context):
                                                 "").replace("Intent", "")
     message["answer"] = answer
 
-    # if "answers" not in message or message["answers"] == "[]":
-    #     message["answers"] = json.dumps([answer])
-    # else:
     previous_answer = json.loads(message["answers"])
     previous_answer.append(answer)
     message["answers"] = json.dumps(previous_answer)

@@ -2,6 +2,8 @@ import os
 import datetime
 import json
 import logging
+import math
+import random
 import boto3
 from botocore.exceptions import ClientError
 
@@ -14,44 +16,11 @@ sqs = boto3.client('sqs')
 logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s: %(message)s')
 
+maximum_parallel_call = 20
+
 
 def lambda_handler(event, context):
     print(event)
-
-    def add_fields(receiver, fields):
-        receiver.update(fields)
-        return receiver
-
-    def body_transform(call_task):
-        return list(
-            map(
-                lambda receiver: add_fields(
-                    receiver, {
-                        'task_id':
-                        call_task['task_id'],
-                        'status':
-                        "DropCall",
-                        "greeting":
-                        call_task['greeting'],
-                        "ending":
-                        call_task['ending'],
-                        "answers":
-                        "[]",
-                        "error":
-                        "null",
-                        "questions":
-                        call_task['questions'],
-                        "number_of_question":
-                        str(len(call_task['questions'])),
-                        'response_hanlder_function_arn':
-                        os.environ['ResponseHanlderFunctionArn'],
-                        'iterator_function_arn':
-                        os.environ['IteratorFunctionArn'],
-                        "send_task_success_function_arn":
-                        os.environ['SendTaskSuccessFunctionArn'],
-                        'call_at':
-                        datetime.datetime.utcnow().isoformat()
-                    }), call_task["receivers"]))
 
     call_task = json.loads(event['Records'][0]['body'])
     data = body_transform(call_task)
@@ -87,3 +56,45 @@ def put_object(dest_bucket_name, dest_object_name, object_data):
         logging.error(e)
         return False
     return True
+
+
+def body_transform(call_task):
+    def add_fields(receiver, fields):
+        receiver.update(fields)
+        return receiver
+
+    return list(
+        map(
+            lambda receiver: add_fields(
+                receiver, {
+                    'task_id':
+                    call_task['task_id'],
+                    'status':
+                    "DropCall",
+                    "greeting":
+                    call_task['greeting'],
+                    "ending":
+                    call_task['ending'],
+                    "answers":
+                    "[]",
+                    "error":
+                    "null",
+                    "questions":
+                    call_task['questions'],
+                    "number_of_question":
+                    str(len(call_task['questions'])),
+                    'response_hanlder_function_arn':
+                    os.environ['ResponseHanlderFunctionArn'],
+                    'iterator_function_arn':
+                    os.environ['IteratorFunctionArn'],
+                    "send_task_success_function_arn":
+                    os.environ['SendTaskSuccessFunctionArn'],
+                    "delay":
+                    random.randrange(
+                        0,
+                        math.ceil(
+                            len(call_task["receivers"]) / maximum_parallel_call
+                        ) + 1),
+                    'call_at':
+                    datetime.datetime.utcnow().isoformat()
+                }), call_task["receivers"]))
