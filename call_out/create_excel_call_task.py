@@ -24,7 +24,10 @@ def lambda_handler(event, context):
         configures = pd.read_excel(
             excel_file,
             sheet_name="configures",
-        ).fillna('').to_dict()
+        ).fillna('').set_index('Key').to_dict('index')
+
+        configures = dict(
+            map(lambda kv: (kv[0], kv[1]["Value"]), configures.items()))
 
         questions = pd.read_excel(
             excel_file, sheet_name="questions").dropna().to_dict('records')
@@ -39,10 +42,13 @@ def lambda_handler(event, context):
         receivers["id"] = list(
             map(lambda x: task_id + "_" + str(x), receivers["receiver_id"]))
 
+        configures["phone_prefix"] = str(configures["phone_prefix"])
+        configures["phone_prefix"] = (
+            "" if configures["phone_prefix"].startswith("+") else "+") + str(
+                configures["phone_prefix"])
         receivers["phone_number"] = list(
-            map(
-                lambda x: "+" + str(configures["phone_prefix"][0]) + str(int(
-                    x)), receivers["phone_number"]))
+            map(lambda x: configures["phone_prefix"] + str(int(x)),
+                receivers["phone_number"]))
 
         receivers = receivers.to_dict('records')
 
@@ -52,8 +58,8 @@ def lambda_handler(event, context):
 
         call_task = {
             "task_id": task_id,
-            "greeting": configures["greeting"][0],
-            "ending": configures["ending"][0],
+            "greeting": configures["greeting"],
+            "ending": configures["ending"],
             "questions": questions,
             "receivers": receivers
         }
