@@ -9,6 +9,9 @@ Parameters:
     Type: String
   SourcePhoneNumber:
     Type: String
+  TimeoutSeconds:
+    Type: Number
+    Default: 300
 Globals:
   Function:
     Timeout: 30
@@ -276,7 +279,7 @@ Resources:
                       "Callout with AWS Connect": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
-                        "TimeoutSeconds": 300,
+                        "TimeoutSeconds": ${TimeoutSeconds},
                         "Parameters": {
                           "QueueUrl": "${AsynCalloutQueue}",
                           "MessageBody": {
@@ -330,6 +333,7 @@ Resources:
               }
             }                       
           - 
+            TimeoutSeconds: !Ref TimeoutSeconds
             AsynCalloutQueue: !Ref AsynCalloutQueue
             CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
             GetCalloutJobFunction: !GetAtt GetCalloutJobFunction.Arn
