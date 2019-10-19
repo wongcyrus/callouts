@@ -19,7 +19,9 @@ Update ContactFlowArn, and SourcePhoneNumber in deployment.sh.
 
 sudo ./get_layer_packages.sh
 
-./deployment.sh
+UNIQUE_ID=change-this-to-get-a-unique-source-bucket
+
+source deployment.sh
 
 
 ## How to use it without a line of code.

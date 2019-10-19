@@ -16,6 +16,7 @@ def lambda_handler(event, context):
     del message["response_hanlder_function_arn"]
     del message["iterator_function_arn"]
     del message["send_task_success_function_arn"]
+    del message["question_id"]
 
     message["status"] = "CallCompleted"
     stepfunctions_client.send_task_success(taskToken=taskToken,

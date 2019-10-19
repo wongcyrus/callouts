@@ -16,5 +16,6 @@ def lambda_handler(event, context):
     data["question"] = question["question"]
     data["question_type"] = question["question_type"]
     data["i"] = int(data["i"]) + 1
+    data["question_id"] = str(data["id"]) + "_q" + str(data["i"])
     print(data)
     return data
