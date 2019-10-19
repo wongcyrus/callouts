@@ -7,7 +7,7 @@ export REGION=$AWS_DEFAULT_REGION
 
 echo "Deploy $STACK_NAME stack at $REGION region"
 
-sourcebucket=awscallout$STACK_NAME
+sourcebucket=awscallout$UNIQUE_ID
 aws s3 mb s3://$sourcebucket --region $REGION 
 rm package.yaml
 sam package --template-file template.yaml --s3-bucket $sourcebucket --output-template-file package.yaml
