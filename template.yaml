@@ -102,6 +102,14 @@ Resources:
       Handler: response_handler.lambda_handler
       CodeUri: call_out/
 
+  ResponseHanlderFunctionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt ResponseHanlderFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: connect.amazonaws.com
+      SourceArn: !Ref InstanceArn
+      
   SendTaskSuccessFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -115,7 +123,15 @@ Resources:
               Action:
                - states:SendTaskSuccess
               Resource: !Ref CalloutStateMachine
-          
+
+  SendTaskSuccessFunctionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt SendTaskSuccessFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: connect.amazonaws.com
+      SourceArn: !Ref InstanceArn
+      
   GetCallResultFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -141,6 +157,14 @@ Resources:
     Properties:
       Handler: iterator.lambda_handler
       CodeUri: call_out/
+
+  IteratorFunctionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt IteratorFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: connect.amazonaws.com
+      SourceArn: !Ref InstanceArn
 
   CreateExcelCallTaskFunction:
     Type: AWS::Serverless::Function
