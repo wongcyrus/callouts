@@ -243,62 +243,6 @@
       }
     },
     {
-      "id": "502c463b-c1e9-4620-97e9-fb36a466ea21",
-      "type": "Loop",
-      "branches": [
-        {
-          "condition": "Looping",
-          "transition": "c0653954-3490-45ac-8a07-97b004546f5e"
-        },
-        {
-          "condition": "Complete",
-          "transition": "09025934-0180-4b4b-b717-545d182e8546"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "LoopCount",
-          "namespace": "User Defined",
-          "value": "number_of_question"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 308,
-          "y": 749
-        },
-        "useDynamic": true
-      }
-    },
-    {
-      "id": "dfe34cef-4231-4fb2-b01c-2854e7402d1f",
-      "type": "SetAttributes",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "Attribute",
-          "value": "answers",
-          "key": "answers",
-          "namespace": "External"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 2147,
-          "y": 535
-        }
-      }
-    },
-    {
       "id": "169c250e-e537-45df-b14f-f458c70bd564",
       "type": "GetUserInput",
       "branches": [
@@ -565,55 +509,6 @@
         }
       },
       "target": "Lex"
-    },
-    {
-      "id": "b0447a99-c341-4bb9-b2e1-748775536ea1",
-      "type": "InvokeExternalResource",
-      "branches": [
-        {
-          "condition": "Success",
-          "transition": "dfe34cef-4231-4fb2-b01c-2854e7402d1f"
-        },
-        {
-          "condition": "Error",
-          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "FunctionArn",
-          "value": "response_hanlder_function_arn",
-          "namespace": "User Defined"
-        },
-        {
-          "name": "TimeLimit",
-          "value": "8"
-        },
-        {
-          "name": "Parameter",
-          "key": "response_intent",
-          "value": "Lex.IntentName",
-          "namespace": "System"
-        },
-        {
-          "name": "Parameter",
-          "key": "ContactId",
-          "value": "ContactId",
-          "namespace": "System"
-        }
-      ],
-      "metadata": {
-        "position": {
-          "x": 1908,
-          "y": 389
-        },
-        "dynamicMetadata": {
-          "response_intent": true,
-          "ContactId": true
-        },
-        "useDynamic": true
-      },
-      "target": "Lambda"
     },
     {
       "id": "beddd34a-78e7-4feb-86fb-98e92414af0a",
@@ -1080,18 +975,6 @@
       }
     },
     {
-      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
-      "type": "Disconnect",
-      "branches": [],
-      "parameters": [],
-      "metadata": {
-        "position": {
-          "x": 2439,
-          "y": 356
-        }
-      }
-    },
-    {
       "id": "d1c063ab-ed4e-4dde-b881-328025ac7720",
       "type": "CheckAttribute",
       "branches": [
@@ -1322,6 +1205,129 @@
         }
       },
       "target": "Lex"
+    },
+    {
+      "id": "502c463b-c1e9-4620-97e9-fb36a466ea21",
+      "type": "Loop",
+      "branches": [
+        {
+          "condition": "Looping",
+          "transition": "c0653954-3490-45ac-8a07-97b004546f5e"
+        },
+        {
+          "condition": "Complete",
+          "transition": "09025934-0180-4b4b-b717-545d182e8546"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "LoopCount",
+          "namespace": "User Defined",
+          "value": "number_of_question"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 308,
+          "y": 749
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": {
+        "position": {
+          "x": 2439,
+          "y": 356
+        }
+      }
+    },
+    {
+      "id": "b0447a99-c341-4bb9-b2e1-748775536ea1",
+      "type": "InvokeExternalResource",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "dfe34cef-4231-4fb2-b01c-2854e7402d1f"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "FunctionArn",
+          "value": "response_hanlder_function_arn",
+          "namespace": "User Defined"
+        },
+        {
+          "name": "TimeLimit",
+          "value": "8"
+        },
+        {
+          "name": "Parameter",
+          "key": "response_intent",
+          "value": "Lex.IntentName",
+          "namespace": "System"
+        },
+        {
+          "name": "Parameter",
+          "key": "ContactId",
+          "value": "ContactId",
+          "namespace": "System"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 1908,
+          "y": 389
+        },
+        "dynamicMetadata": {
+          "response_intent": true,
+          "ContactId": true
+        },
+        "useDynamic": true
+      },
+      "target": "Lambda"
+    },
+    {
+      "id": "dfe34cef-4231-4fb2-b01c-2854e7402d1f",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "502c463b-c1e9-4620-97e9-fb36a466ea21"
+        },
+        {
+          "condition": "Error",
+          "transition": "15613d6b-4fe9-4221-aa85-4b37c7c3a3a2"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "answers",
+          "key": "answers",
+          "namespace": "External"
+        },
+        {
+          "name": "Attribute",
+          "value": "intent_answer",
+          "key": "intent_answer",
+          "namespace": "External"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 2147,
+          "y": 535
+        }
+      }
     }
   ],
   "version": "1",
@@ -1337,6 +1343,6 @@
     "description": null,
     "type": "contactFlow",
     "status": "published",
-    "hash": "e47a5852f014425b30c24d0d29d8017bf5c6125597eb175aa3fc36e9d1a68af8"
+    "hash": "4ba97364a246cc426b1f296a9ed6c78e8ad471faca6f3f4baecfb35a65ccdd38"
   }
 }

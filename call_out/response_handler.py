@@ -17,13 +17,15 @@ def lambda_handler(event, context):
         "response_intent"]
     message["error"] = "null"
 
-    if "intent_answer" in message:
+    if "intent_answer" in message and message["intent_answer"] is not "":
         message["answer"] = message["intent_answer"]
         answer = message["intent_answer"]
     else:
         answer = message["response_intent"].replace("CalloutBot_",
                                                     "").replace("Intent", "")
         message["answer"] = answer
+
+    message["intent_answer"] = ""
 
     previous_answer = json.loads(message["answers"])
     previous_answer.append(answer)
