@@ -4,8 +4,8 @@ cd ExcelLexBot
 sudo ./get_layer_packages.sh
 source deployment.sh
 cd ..
-git clone https://github.com/wongcyrus/aws_callouts
-cd aws_callouts
+git clone https://github.com/wongcyrus/aws-callouts
+cd aws-callouts
 ./deploy_chatbot.sh
 ./setup.sh
 sudo ./get_layer_packages.sh

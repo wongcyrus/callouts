@@ -12,6 +12,20 @@ Parameters:
   TimeoutSeconds:
     Type: Number
     Default: 300
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: aws_callouts
+    Description: >
+      AWS callout makes a batch outbound calls with Amazon Connect and Amazon Lex. 
+      You just need to fill in an Excel file and upload a EXcel file into S3. 
+    Author: Cyrus Wong
+    SpdxLicenseId: Apache-2.0
+    LicenseUrl: LICENSE.txt
+    ReadmeUrl: README.md
+    Labels: ['Lex']
+    HomePageUrl: https://github.com/wongcyrus/aws-callouts
+    SemanticVersion: 0.0.1
+    SourceCodeUrl: https://github.com/wongcyrus/aws-callouts      
 Globals:
   Function:
     Timeout: 30
@@ -270,8 +284,7 @@ Resources:
                 Resource: 
                   - !GetAtt GetCalloutJobFunction.Arn
                   - !GetAtt GetCallResultFunction.Arn
-                
-                
+
   CalloutStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
