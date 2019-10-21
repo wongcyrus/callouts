@@ -20,4 +20,4 @@ aws cloudformation deploy --stack-name $STACK_NAME --template-file package.yaml 
     ContactFlowId=$contactFlowId \
     SourcePhoneNumber=$sourcePhoneNumber
 
-sam publish --template package.yaml --region us-east-1
+# sam publish --template package.yaml --region us-east-1
