@@ -3,17 +3,22 @@
 This project is a tools to send out bound call reminder with AWS Connect and save the confirmation record in DynamoDB.
 
 
-## Setup
+## Setup Overview
 
 1. Deploy ExcelLexBot.
-2. Upload CalloutBot.xlsx to the S3 bucket for ExcelLexBot.
+2. Upload 4 CalloutBotXXX.xlsx file into the S3 bucket for ExcelLexBot.
 3. You have to create a AWS connect instance with a contact flow. https://docs.aws.amazon.com/connect/latest/adminguide/connect-contact-flows.html 
 4. Import contract_flow/CallingOutContractFlow.json . https://docs.aws.amazon.com/connect/latest/adminguide/contact-flow-import-export.html
 5. Update the Contact flows to access Lex Chatbot CalloutBot_ExcelLexBot
 6. Deploy this project.
 
-## Deployment with Cloud9
-Update ContactFlowArn, and SourcePhoneNumber in deployment.sh.
+
+## Deployment with AWS Serverless Application Repository
+Search "awscallout" and input iInstanceId, ContactFlowId, and SourcePhoneNumber, then you can deploy it with one click!
+
+
+## Build and Deployment with Cloud9
+Update instanceId, contactFlowId, and sourcePhoneNumber in deployment.sh.
 
 ./setup.sh
 

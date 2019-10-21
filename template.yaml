@@ -3,9 +3,9 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   callout
 Parameters:
-  InstanceArn:
+  InstanceId:
     Type: String
-  ContactFlowArn:
+  ContactFlowId:
     Type: String
   SourcePhoneNumber:
     Type: String
@@ -14,15 +14,15 @@ Parameters:
     Default: 300
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: aws_callouts
+    Name: awscallouts
     Description: >
       AWS callout makes a batch outbound calls with Amazon Connect and Amazon Lex. 
-      You just need to fill in an Excel file and upload a EXcel file into S3. 
+      You just need to fill in an Excel file and upload a Excel file into S3. 
     Author: Cyrus Wong
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE.txt
     ReadmeUrl: README.md
-    Labels: ['Lex']
+    Labels: ['amazon_connect', 'lex']
     HomePageUrl: https://github.com/wongcyrus/aws-callouts
     SemanticVersion: 0.0.1
     SourceCodeUrl: https://github.com/wongcyrus/aws-callouts      
@@ -66,14 +66,14 @@ Resources:
             - Effect: Allow
               Action:
                - connect:StartOutboundVoiceContact
-              Resource: !Sub ${InstanceArn}/*
+              Resource: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/*'
             - Effect: Allow
               Action:
                - states:SendTaskSuccess 
               Resource: !Ref CalloutStateMachine                   
       Environment:
         Variables:
-          ContactFlowArn: !Ref ContactFlowArn
+          ContactFlowArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/contact-flow/${ContactFlowId}'
           SourcePhoneNumber: !Ref SourcePhoneNumber
           AsynCalloutQueueUrl: !Ref AsynCalloutQueue
           ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
@@ -122,7 +122,7 @@ Resources:
       FunctionName: !GetAtt ResponseHanlderFunction.Arn
       Action: lambda:InvokeFunction
       Principal: connect.amazonaws.com
-      SourceArn: !Ref InstanceArn
+      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/'
       
   SendTaskSuccessFunction:
     Type: AWS::Serverless::Function 
@@ -144,7 +144,7 @@ Resources:
       FunctionName: !GetAtt SendTaskSuccessFunction.Arn
       Action: lambda:InvokeFunction
       Principal: connect.amazonaws.com
-      SourceArn: !Ref InstanceArn
+      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/'
       
   GetCallResultFunction:
     Type: AWS::Serverless::Function 
@@ -178,7 +178,7 @@ Resources:
       FunctionName: !GetAtt IteratorFunction.Arn
       Action: lambda:InvokeFunction
       Principal: connect.amazonaws.com
-      SourceArn: !Ref InstanceArn
+      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/'
 
   CreateExcelCallTaskFunction:
     Type: AWS::Serverless::Function
