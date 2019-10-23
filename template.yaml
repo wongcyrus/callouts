@@ -24,7 +24,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['amazon_connect', 'lex']
     HomePageUrl: https://github.com/wongcyrus/aws-callouts
-    SemanticVersion: 0.0.1
+    SemanticVersion: 0.0.2
     SourceCodeUrl: https://github.com/wongcyrus/aws-callouts      
 Globals:
   Function:
@@ -122,7 +122,8 @@ Resources:
       FunctionName: !GetAtt ResponseHanlderFunction.Arn
       Action: lambda:InvokeFunction
       Principal: connect.amazonaws.com
-      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/'
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}'
       
   SendTaskSuccessFunction:
     Type: AWS::Serverless::Function 
@@ -144,7 +145,8 @@ Resources:
       FunctionName: !GetAtt SendTaskSuccessFunction.Arn
       Action: lambda:InvokeFunction
       Principal: connect.amazonaws.com
-      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/'
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}'
       
   GetCallResultFunction:
     Type: AWS::Serverless::Function 
@@ -178,7 +180,8 @@ Resources:
       FunctionName: !GetAtt IteratorFunction.Arn
       Action: lambda:InvokeFunction
       Principal: connect.amazonaws.com
-      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/'
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}'
 
   CreateExcelCallTaskFunction:
     Type: AWS::Serverless::Function
