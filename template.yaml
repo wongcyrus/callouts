@@ -24,7 +24,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['amazon_connect', 'lex']
     HomePageUrl: https://github.com/wongcyrus/aws-callouts
-    SemanticVersion: 0.0.2
+    SemanticVersion: 0.0.1
     SourceCodeUrl: https://github.com/wongcyrus/aws-callouts      
 Globals:
   Function:
