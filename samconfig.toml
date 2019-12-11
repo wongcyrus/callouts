@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "awscallout"
+s3_bucket = "awscalloutchange-this-to-get-a-unique-source-bucket"
+s3_prefix = "awscallout"
+region = "us-east-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+parameter_overrides="InstanceId=087c643b-fd04-4b8a-b2c1-b32c1e6de399 ContactFlowId=9163cea9-b9d6-4630-b315-920695e12e66 SourcePhoneNumber=+18337325078"

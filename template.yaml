@@ -223,21 +223,28 @@ Resources:
   CallSqsQueue:
     Type: AWS::SQS::Queue
     Properties: 
-      RedrivePolicy: 
+      FifoQueue: true
+      RedrivePolicy:
         deadLetterTargetArn: !GetAtt CallDeadLetterQueue.Arn
         maxReceiveCount: 1
+      VisibilityTimeout: 120
   CallDeadLetterQueue: 
     Type: AWS::SQS::Queue
-    
+    Properties: 
+      FifoQueue: true    
   AsynCalloutQueue:
     Type: AWS::SQS::Queue
-    Properties: 
+    Properties:
+      FifoQueue: true    
       RedrivePolicy: 
         deadLetterTargetArn: !GetAtt AsynCalloutDeadLetterQueue.Arn
         maxReceiveCount: 1
+      VisibilityTimeout: 120        
   AsynCalloutDeadLetterQueue: 
     Type: AWS::SQS::Queue
-
+    Properties: 
+      FifoQueue: true
+      
   CallResultDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
