@@ -28,7 +28,8 @@ Metadata:
     SourceCodeUrl: https://github.com/wongcyrus/aws-callouts      
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 120
+    MemorySize: 1024
     Tracing: Active
     Runtime: python3.7  
 Resources:

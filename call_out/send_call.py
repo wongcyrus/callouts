@@ -38,6 +38,8 @@ def lambda_handler(event, context):
     delay = receiver["delay"];
     del receiver["delay"]
     delete_message_batch(os.environ['AsynCalloutQueueUrl'], event)
+    
+    source_phone_number = str(os.environ['SourcePhoneNumber']).replace(" ", "").replace("-", "")
 
     try:
         print("Sleep: " + str(delay))
