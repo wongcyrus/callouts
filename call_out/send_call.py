@@ -49,7 +49,7 @@ def lambda_handler(event, context):
             DestinationPhoneNumber=receiver['phone_number'],
             ContactFlowId=contract_flow_id,
             InstanceId=instance_id,
-            SourcePhoneNumber=os.environ['SourcePhoneNumber'],
+            SourcePhoneNumber=source_phone_number,
             Attributes=receiver)
         print(response)    
         
