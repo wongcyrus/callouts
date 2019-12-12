@@ -1,20 +1,7 @@
-# Change to default Python3
-alias python='python3'
-python --version
-# Install Code Formatter for Python and you need to set AWS Cloud9「Preferences」->「Python Support」->「Custom Code Formatter」
-# yapf -i "$file"
-sudo pip install yapf
-sudo yum -y update
-sudo yum -y install aws-cli
-sudo -H pip install awscli --upgrade
-# Install brew and update SAM CLI to the latest version.
-sudo ln -s /bin/touch /usr/bin/touch
-yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
-test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-test -r ~/.bash_profile && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.bash_profile
-echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
-brew --version
-brew tap aws/tap
-brew install aws-sam-cli
-sam --version
+wget https://gist.githubusercontent.com/wongcyrus/a4e726b961260395efa7811cab0b4516/raw/2049301120a969ddc4ee51e868a00a6e175bf66b/resize.sh
+chmod +x resize.sh
+./resize.sh 20
+
+wget https://gist.githubusercontent.com/wongcyrus/8eaddcc155aec4cdb451178fb5cbc2b8/raw/f60a012b9165dc9b87fd67028ba8d065be40ed2e/install_sam_cli.sh
+chmod +x install_sam_cli.sh
+./install_sam_cli.sh
