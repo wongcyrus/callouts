@@ -43,7 +43,7 @@ def lambda_handler(event, context):
 
     try:
         print("Sleep: " + str(delay))
-        time.sleep(delay )
+        time.sleep(delay)
         print(event)
         response = client.start_outbound_voice_contact(
             DestinationPhoneNumber=receiver['phone_number'],

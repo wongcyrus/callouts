@@ -35,4 +35,8 @@ def lambda_handler(event, context):
                    task_id + "_result.xlsx")
     print(df)
 
-    return "Finish"
+    return {
+        "TaskId": task_id,
+        "Bucket": os.environ['CallReportBucket'],
+        "Key": task_id + "_result.xlsx"
+    }

@@ -6,6 +6,7 @@ sys.path.append("/opt/")
 from urllib.parse import unquote_plus
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
+from datetime import datetime
 
 s3 = boto3.client('s3')
 sqs = boto3.client('sqs')
@@ -61,7 +62,8 @@ def lambda_handler(event, context):
             "greeting": configures["greeting"],
             "ending": configures["ending"],
             "questions": questions,
-            "receivers": receivers
+            "receivers": receivers,
+            "create_time": str(datetime.now())
         }
         print(call_task)
 
@@ -69,6 +71,7 @@ def lambda_handler(event, context):
               str(sys.getsizeof(json.dumps(call_task)) / 1024))
 
         response = sqs.send_message(QueueUrl=os.environ['CallSqsQueueUrl'],
+                                    MessageGroupId="1",
                                     MessageBody=json.dumps(call_task))
         print(response)
         return response

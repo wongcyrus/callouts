@@ -224,6 +224,7 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       FifoQueue: true
+      ContentBasedDeduplication: true
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt CallDeadLetterQueue.Arn
         maxReceiveCount: 1
@@ -231,11 +232,13 @@ Resources:
   CallDeadLetterQueue: 
     Type: AWS::SQS::Queue
     Properties: 
-      FifoQueue: true    
+      FifoQueue: true
+      ContentBasedDeduplication: true
   AsynCalloutQueue:
     Type: AWS::SQS::Queue
     Properties:
-      FifoQueue: true    
+      FifoQueue: true
+      ContentBasedDeduplication: true
       RedrivePolicy: 
         deadLetterTargetArn: !GetAtt AsynCalloutDeadLetterQueue.Arn
         maxReceiveCount: 1
@@ -244,7 +247,13 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       FifoQueue: true
-      
+      ContentBasedDeduplication: true
+
+  CallJobCompletionSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties: 
+      DisplayName: CallJobCompletion
+  
   CallResultDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -295,7 +304,11 @@ Resources:
                 Resource: 
                   - !GetAtt GetCalloutJobFunction.Arn
                   - !GetAtt GetCallResultFunction.Arn
-
+              - Effect: Allow
+                Action:
+                  - SNS:Publish
+                Resource: !Ref CallJobCompletionSNSTopic
+                
   CalloutStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -330,6 +343,7 @@ Resources:
                         "TimeoutSeconds": ${TimeoutSeconds},
                         "Parameters": {
                           "QueueUrl": "${AsynCalloutQueue}",
+                          "MessageGroupId": "1",
                           "MessageBody": {
                               "Message.$":"$",
                               "TaskToken.$": "$$.Task.Token"
@@ -373,7 +387,16 @@ Resources:
                 "Get Call Result": {
                   "Type": "Task",
                   "Resource": "${GetCallResultFunction}",
-                  "Next": "Finish"
+                  "Next": "Send Completion message to SNS"
+                },
+                "Send Completion message to SNS":{  
+                   "Type":"Task",
+                   "Resource": "arn:aws:states:::sns:publish",
+                   "Parameters":{  
+                      "TopicArn":"${CallJobCompletionSNSTopic}",
+                      "Message.$": "$"
+                   },
+                   "Next": "Finish"
                 },
                 "Finish": {
                   "Type": "Succeed"
@@ -386,6 +409,7 @@ Resources:
             CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
             GetCalloutJobFunction: !GetAtt GetCalloutJobFunction.Arn
             GetCallResultFunction: !GetAtt GetCallResultFunction.Arn
+            CallJobCompletionSNSTopic: !Ref CallJobCompletionSNSTopic
       RoleArn: !GetAtt CalloutStatesExecutionRole.Arn
       
       
