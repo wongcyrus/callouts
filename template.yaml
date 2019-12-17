@@ -423,3 +423,6 @@ Outputs:
   CallReportBucket:
     Description: Call Report Bucket
     Value: !Ref CallReportBucket
+  CallJobCompletionSNSTopic:
+    Description: SNS Topic for job completion.
+    Value: !Ref CallJobCompletionSNSTopic
