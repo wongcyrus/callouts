@@ -1,4 +1,4 @@
-# AWS Callouts
+#Callouts
 
 This project is a tools to send out bound call reminder with AWS Connect and save the confirmation record in DynamoDB.
 
