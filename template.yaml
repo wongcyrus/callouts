@@ -12,6 +12,9 @@ Parameters:
   TimeoutSeconds:
     Type: Number
     Default: 300
+  ConcurrentCallTask:
+    Type: Number
+    Default: 10    
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: awscallouts
@@ -326,6 +329,7 @@ Resources:
                 "Process Call Messages": {
                   "Type": "Map",
                   "Next": "Get Call Result",
+                  "MaxConcurrency": ${ConcurrentCallTask},
                   "InputPath": "$",
                   "ItemsPath": "$",
                   "OutputPath": "$.[0]",
@@ -405,6 +409,7 @@ Resources:
             }                       
           - 
             TimeoutSeconds: !Ref TimeoutSeconds
+            ConcurrentCallTask: !Ref ConcurrentCallTask
             AsynCalloutQueue: !Ref AsynCalloutQueue
             CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
             GetCalloutJobFunction: !GetAtt GetCalloutJobFunction.Arn
