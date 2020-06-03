@@ -51,7 +51,10 @@ Resources:
       Handler: get_call_job.lambda_handler
       CodeUri: call_out/
       Policies:
-        - AWSLambdaExecute
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"
       Environment:
         Variables:
           ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
@@ -64,7 +67,7 @@ Resources:
       Layers:
         - !Ref LibLayer
       Policies:
-        - AWSLambdaExecute
+        - AWSLambdaBasicExecutionRole
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -95,7 +98,11 @@ Resources:
       CodeUri: call_out/
       ReservedConcurrentExecutions: 1
       Policies:
-        - AWSLambdaExecute      
+        - AWSLambdaBasicExecutionRole  
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"        
         - StepFunctionsExecutionPolicy:
             StateMachineName:
               !GetAtt CalloutStateMachine.Name
@@ -135,7 +142,7 @@ Resources:
       Handler: send_task_success.lambda_handler
       CodeUri: call_out/
       Policies:
-        - AWSLambdaExecute      
+        - AWSLambdaBasicExecutionRole      
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -160,7 +167,11 @@ Resources:
       Layers:
         - !Ref LibLayer      
       Policies:
-        - AWSLambdaExecute      
+        - AWSLambdaBasicExecutionRole 
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -195,7 +206,11 @@ Resources:
       Layers:
         - !Ref LibLayer
       Policies: 
-        - AWSLambdaExecute
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -219,10 +234,12 @@ Resources:
   
   ExcelCallTaskBucket:
     Type: AWS::S3::Bucket     
-
+    Properties:
+        BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
   CallReportBucket:
     Type: AWS::S3::Bucket 
-    
+    Properties:
+        BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"    
   CallSqsQueue:
     Type: AWS::SQS::Queue
     Properties: 
