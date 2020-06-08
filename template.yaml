@@ -51,6 +51,7 @@ Resources:
       CodeUri: call_out/
       Policies:
         - S3CrudPolicy:
+<<<<<<< HEAD
             BucketName: !Sub 
               - ${bucketARN}
               - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
@@ -58,6 +59,11 @@ Resources:
             BucketName: !Sub 
               - ${bucketARN}
               - { bucketARN : !GetAtt CallReportBucket.Arn}
+=======
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+        - S3CrudPolicy:
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"
+>>>>>>> 39e32ff3e2764fc280a086bee2c2dd7376d9b97e
       Environment:
         Variables:
           ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
