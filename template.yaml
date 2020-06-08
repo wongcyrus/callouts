@@ -27,7 +27,7 @@ Metadata:
     Labels: ['amazon_connect', 'lex']
     HomePageUrl: https://github.com/wongcyrus/callouts
     SemanticVersion: 0.0.1
-    SourceCodeUrl: https://github.com/wongcyrus/callouts     
+    SourceCodeUrl: https://github.com/wongcyrus/callouts      
 Globals:
   Function:
     Timeout: 120
@@ -51,19 +51,9 @@ Resources:
       CodeUri: call_out/
       Policies:
         - S3CrudPolicy:
-<<<<<<< HEAD
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
+            BucketName: !Ref ExcelCallTaskBucket
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt CallReportBucket.Arn}
-=======
-            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
-        - S3CrudPolicy:
-            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"
->>>>>>> 39e32ff3e2764fc280a086bee2c2dd7376d9b97e
+            BucketName: !Ref CallReportBucket
       Environment:
         Variables:
           ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
@@ -109,13 +99,9 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole  
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
+            BucketName: !Ref ExcelCallTaskBucket
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt CallReportBucket.Arn}
+            BucketName: !Ref CallReportBucket
         - StepFunctionsExecutionPolicy:
             StateMachineName:
               !GetAtt CalloutStateMachine.Name
@@ -182,13 +168,9 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole 
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
+            BucketName: !Ref ExcelCallTaskBucket
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt CallReportBucket.Arn}
+            BucketName: !Ref CallReportBucket
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -225,13 +207,9 @@ Resources:
       Policies: 
         - AWSLambdaBasicExecutionRole
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}  
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
         - S3CrudPolicy:
-            BucketName: !Sub 
-              - ${bucketARN}
-              - { bucketARN : !GetAtt CallReportBucket.Arn}
+            BucketName: !Ref CallReportBucket
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
