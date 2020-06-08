@@ -17,18 +17,17 @@ Parameters:
     Default: 10    
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: awscallouts
+    Name: callouts
     Description: >
-      AWS callout makes a batch outbound calls with Amazon Connect and Amazon Lex. 
-      You just need to fill in an Excel file and upload a Excel file into S3. 
+      Callouts uses Amazon Connect to initiate outbound call and Amazon Lex chatbot interactive with students or customers. It generalizes a survey like call job to multiple recipients in parallel.
     Author: Cyrus Wong
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE.txt
     ReadmeUrl: README.md
     Labels: ['amazon_connect', 'lex']
-    HomePageUrl: https://github.com/wongcyrus/aws-callouts
+    HomePageUrl: https://github.com/wongcyrus/callouts
     SemanticVersion: 0.0.1
-    SourceCodeUrl: https://github.com/wongcyrus/aws-callouts      
+    SourceCodeUrl: https://github.com/wongcyrus/callouts     
 Globals:
   Function:
     Timeout: 120
@@ -51,7 +50,14 @@ Resources:
       Handler: get_call_job.lambda_handler
       CodeUri: call_out/
       Policies:
-        - AWSLambdaExecute
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt CallReportBucket.Arn}
       Environment:
         Variables:
           ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
@@ -64,7 +70,7 @@ Resources:
       Layers:
         - !Ref LibLayer
       Policies:
-        - AWSLambdaExecute
+        - AWSLambdaBasicExecutionRole
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -95,7 +101,15 @@ Resources:
       CodeUri: call_out/
       ReservedConcurrentExecutions: 1
       Policies:
-        - AWSLambdaExecute      
+        - AWSLambdaBasicExecutionRole  
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt CallReportBucket.Arn}
         - StepFunctionsExecutionPolicy:
             StateMachineName:
               !GetAtt CalloutStateMachine.Name
@@ -135,7 +149,7 @@ Resources:
       Handler: send_task_success.lambda_handler
       CodeUri: call_out/
       Policies:
-        - AWSLambdaExecute      
+        - AWSLambdaBasicExecutionRole      
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -160,7 +174,15 @@ Resources:
       Layers:
         - !Ref LibLayer      
       Policies:
-        - AWSLambdaExecute      
+        - AWSLambdaBasicExecutionRole 
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt CallReportBucket.Arn}
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -195,7 +217,15 @@ Resources:
       Layers:
         - !Ref LibLayer
       Policies: 
-        - AWSLambdaExecute
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt ExcelCallTaskBucket.Arn}  
+        - S3CrudPolicy:
+            BucketName: !Sub 
+              - ${bucketARN}
+              - { bucketARN : !GetAtt CallReportBucket.Arn}
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -219,10 +249,12 @@ Resources:
   
   ExcelCallTaskBucket:
     Type: AWS::S3::Bucket     
-
+    Properties:
+        BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
   CallReportBucket:
     Type: AWS::S3::Bucket 
-    
+    Properties:
+        BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-callreport"    
   CallSqsQueue:
     Type: AWS::SQS::Queue
     Properties: 

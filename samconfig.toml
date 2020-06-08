@@ -2,10 +2,10 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "awscallout"
+stack_name = "callout"
 # s3_bucket = awscalloutchange-this-to-get-a-unique-source-bucket
 s3_bucket = "cyruswong-sam-repo"
-s3_prefix = "awscallout"
+s3_prefix = "callout"
 region = "us-east-1"
 confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
