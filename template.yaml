@@ -355,9 +355,9 @@ Resources:
                       "Get Call out job": {
                         "Type": "Task",
                         "Resource": "${GetCalloutJobFunction}",
-                        "Next": "Callout with AWS Connect"
+                        "Next": "Callout with Amazon Connect"
                       },
-                      "Callout with AWS Connect": {
+                      "Callout with Amazon Connect": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
                         "TimeoutSeconds": ${TimeoutSeconds},
