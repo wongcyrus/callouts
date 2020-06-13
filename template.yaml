@@ -44,19 +44,19 @@ Resources:
       LicenseInfo: 'Available under the MIT-0 license.'
       RetentionPolicy: Delete  
 
-  GetCalloutJobFunction:
+  GetCalloutTaskFunction:
     Type: AWS::Serverless::Function 
     Properties:
-      Handler: get_call_job.lambda_handler
+      Handler: get_callout_task.lambda_handler
       CodeUri: call_out/
       Policies:
         - S3CrudPolicy:
-            BucketName: !Ref ExcelCallTaskBucket
+            BucketName: !Ref ExcelCallJobBucket
         - S3CrudPolicy:
             BucketName: !Ref CallReportBucket
       Environment:
         Variables:
-          ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
+          ExcelCallJobBucket: !Ref ExcelCallJobBucket
 
   CalloutFunction:
     Type: AWS::Serverless::Function 
@@ -82,7 +82,7 @@ Resources:
           ContactFlowArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}/contact-flow/${ContactFlowId}'
           SourcePhoneNumber: !Ref SourcePhoneNumber
           AsynCalloutQueueUrl: !Ref AsynCalloutQueue
-          ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
+          ExcelCallJobBucket: !Ref ExcelCallJobBucket
       Events:
         CallSQSEvent:
           Type: SQS
@@ -99,7 +99,7 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole  
         - S3CrudPolicy:
-            BucketName: !Ref ExcelCallTaskBucket
+            BucketName: !Ref ExcelCallJobBucket
         - S3CrudPolicy:
             BucketName: !Ref CallReportBucket
         - StepFunctionsExecutionPolicy:
@@ -112,7 +112,7 @@ Resources:
           ResponseHanlderFunctionArn: !GetAtt ResponseHanlderFunction.Arn
           IteratorFunctionArn: !GetAtt IteratorFunction.Arn
           SendTaskSuccessFunctionArn: !GetAtt SendTaskSuccessFunction.Arn
-          ExcelCallTaskBucket: !Ref ExcelCallTaskBucket
+          ExcelCallJobBucket: !Ref ExcelCallJobBucket
       Events:
         CallSQSEvent:
           Type: SQS
@@ -168,7 +168,7 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole 
         - S3CrudPolicy:
-            BucketName: !Ref ExcelCallTaskBucket
+            BucketName: !Ref ExcelCallJobBucket
         - S3CrudPolicy:
             BucketName: !Ref CallReportBucket
         - Version: '2012-10-17' # Policy Document
@@ -197,7 +197,7 @@ Resources:
       SourceAccount: !Ref 'AWS::AccountId'
       SourceArn: !Sub 'arn:aws:connect:${AWS::Region}:${AWS::AccountId}:instance/${InstanceId}'
 
-  CreateExcelCallTaskFunction:
+  CreateExcelCallJobFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: create_excel_call_task.lambda_handler
@@ -207,7 +207,7 @@ Resources:
       Policies: 
         - AWSLambdaBasicExecutionRole
         - S3CrudPolicy:
-            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+            BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalljob"
         - S3CrudPolicy:
             BucketName: !Ref CallReportBucket
         - Version: '2012-10-17' # Policy Document
@@ -220,10 +220,10 @@ Resources:
         Variables:
           CallSqsQueueUrl: !Ref CallSqsQueue
       Events:
-        ExcelCallTaskEvent:
+        ExcelCallJobEvent:
           Type: S3
           Properties:
-            Bucket: !Ref ExcelCallTaskBucket
+            Bucket: !Ref ExcelCallJobBucket
             Events: s3:ObjectCreated:*
             Filter:
               S3Key:
@@ -231,10 +231,10 @@ Resources:
                   - Name: suffix
                     Value: .xlsx
   
-  ExcelCallTaskBucket:
+  ExcelCallJobBucket:
     Type: AWS::S3::Bucket     
     Properties:
-        BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalltask"
+        BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-excelcalljob"
   CallReportBucket:
     Type: AWS::S3::Bucket 
     Properties:
@@ -321,7 +321,7 @@ Resources:
                 Action:
                   - lambda:InvokeFunction
                 Resource: 
-                  - !GetAtt GetCalloutJobFunction.Arn
+                  - !GetAtt GetCalloutTaskFunction.Arn
                   - !GetAtt GetCallResultFunction.Arn
               - Effect: Allow
                 Action:
@@ -336,9 +336,9 @@ Resources:
           - |-
             {
               "Comment": "Reading messages from an SQS queue and iteratively processing each message.",
-              "StartAt": "Start",
+              "StartAt": "Start Callout job",
               "States": {
-                "Start":{
+                "Start Callout job":{
                   "Type": "Pass",    
                   "Next": "Process Call Messages"
                 },
@@ -350,11 +350,11 @@ Resources:
                   "ItemsPath": "$",
                   "OutputPath": "$.[0]",
                   "Iterator": {
-                    "StartAt": "Get Call out job",
+                    "StartAt": "Get Callout task",
                     "States": {
-                      "Get Call out job": {
+                      "Get Callout task": {
                         "Type": "Task",
-                        "Resource": "${GetCalloutJobFunction}",
+                        "Resource": "${GetCalloutTaskFunction}",
                         "Next": "Callout with Amazon Connect"
                       },
                       "Callout with Amazon Connect": {
@@ -428,7 +428,7 @@ Resources:
             ConcurrentCallTask: !Ref ConcurrentCallTask
             AsynCalloutQueue: !Ref AsynCalloutQueue
             CallResultDynamoDBTable: !Ref CallResultDynamoDBTable
-            GetCalloutJobFunction: !GetAtt GetCalloutJobFunction.Arn
+            GetCalloutTaskFunction: !GetAtt GetCalloutTaskFunction.Arn
             GetCallResultFunction: !GetAtt GetCallResultFunction.Arn
             CallJobCompletionSNSTopic: !Ref CallJobCompletionSNSTopic
       RoleArn: !GetAtt CalloutStatesExecutionRole.Arn
@@ -438,9 +438,9 @@ Outputs:
   CallSqsQueue:
     Description: Call Out Queue ARN
     Value: !GetAtt CallSqsQueue.Arn
-  ExcelCallTaskBucket:
+  ExcelCallJobBucket:
     Description: Excel Call Task Bucket
-    Value: !Ref ExcelCallTaskBucket
+    Value: !Ref ExcelCallJobBucket
   CallReportBucket:
     Description: Call Report Bucket
     Value: !Ref CallReportBucket

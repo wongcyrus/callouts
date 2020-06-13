@@ -29,7 +29,7 @@ def lambda_handler(event, context):
     results = list(
         map(
             lambda call: put_object(
-                os.environ['ExcelCallTaskBucket'], call_task['task_id'] + "/" +
+                os.environ['ExcelCallJobBucket'], call_task['task_id'] + "/" +
                 call["id"] + ".json", json.dumps(call)), data))
 
     keys = list(

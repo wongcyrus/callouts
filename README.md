@@ -32,7 +32,7 @@ source deployment.sh
 ## How to use it without a line of code.
 
 1. Modify contract_flow/call_job.xlsx and it is very easy to understand!
-2. Upload the Excel file to ExcelCallTaskBucket.
+2. Upload the Excel file to ExcelCallJobBucket.
 
 
 ## Sample Code to make calls
