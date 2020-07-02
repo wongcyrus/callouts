@@ -24,7 +24,7 @@ def lambda_handler(event, context):
         excel_file = download_path
         configures = pd.read_excel(
             excel_file,
-            sheet_name="configures",
+            sheet_name="configuration",
         ).fillna('').set_index('Key').to_dict('index')
 
         configures = dict(
