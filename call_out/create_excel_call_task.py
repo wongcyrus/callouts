@@ -7,6 +7,7 @@ from urllib.parse import unquote_plus
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 from datetime import datetime
+from pathlib import Path
 
 s3 = boto3.client('s3')
 sqs = boto3.client('sqs')
@@ -18,13 +19,14 @@ def lambda_handler(event, context):
         key = unquote_plus(record['s3']['object']['key'])
         download_path = '/tmp/{}'.format(key)
 
+        Path(Path(download_path).parent).mkdir(parents=True, exist_ok=True)
         s3.download_file(bucket, key, download_path)
 
         task_id = key.replace(".xlsx", "")
         excel_file = download_path
         configures = pd.read_excel(
             excel_file,
-            sheet_name="configuration",
+            sheet_name="configures",
         ).fillna('').set_index('Key').to_dict('index')
 
         configures = dict(

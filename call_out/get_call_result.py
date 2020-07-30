@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 import sys
 sys.path.append("/opt/")
 import pandas as pd
+from pathlib import Path
 
 dynamodb = resource('dynamodb')
 s3 = boto3.client('s3')
@@ -30,6 +31,8 @@ def lambda_handler(event, context):
 
     df = pd.DataFrame(list(map(convert_answer, response[u'Items'])))
     filename = "/tmp/{}.xlsx".format(task_id)
+
+    Path(Path(filename).parent).mkdir(parents=True, exist_ok=True)
     df.to_excel(filename)
     s3.upload_file(filename, os.environ['CallReportBucket'],
                    task_id + "_result.xlsx")
