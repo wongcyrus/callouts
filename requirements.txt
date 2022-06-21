@@ -3,7 +3,7 @@ Jinja2==2.11.3
 requests==2.22.0
 pandas==0.25.1
 pytz==2019.3
-numpy==1.17.2
+numpy==1.22.0
 xlrd==1.2.0
 jdcal==1.4.1
 et_xmlfile==1.0.1
