@@ -1,6 +1,6 @@
 openpyxl==2.6.3
 Jinja2==2.11.3
-requests==2.22.0
+requests==2.31.0
 pandas==0.25.1
 pytz==2019.3
 numpy==1.17.2
